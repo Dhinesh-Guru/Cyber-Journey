@@ -100,34 +100,55 @@
 
     function mergeCloudDataIntoLocal(cloudData) {
         if (!cloudData) return;
-        
-        const academyPct = (typeof cloudData.progress === 'object' && cloudData.progress) ? (cloudData.progress.academy || 0) : 0;
-        const cyberopsPct = (typeof cloudData.progress === 'object' && cloudData.progress) ? (cloudData.progress.cyberops || 0) : 0;
-        const cipherPct = (typeof cloudData.progress === 'object' && cloudData.progress) ? (cloudData.progress.cipher || 0) : 0;
+
+        const isCloudReset = (cloudData.xp === 0 && (!cloudData.completedAcademyModules || cloudData.completedAcademyModules.length === 0) && (!cloudData.quizBestScores || Object.keys(cloudData.quizBestScores).length === 0));
+
+        if (isCloudReset && (currentUser.xp === 0 || !currentUser.completedAcademyModules || currentUser.completedAcademyModules.length === 0)) {
+            currentUser.xp = 0;
+            currentUser.level = 1;
+            currentUser.rank = 'Cyber Trainee';
+            currentUser.progress = { academy: 0, cyberops: 0, cipher: 0 };
+            currentUser.completedAcademyModules = [];
+            currentUser.completedCyberOpsModules = [];
+            currentUser.completedCipherModules = [];
+            currentUser.quizBestScores = {};
+        } else {
+            // Union & Max Merge so local recent progress is NEVER lost to a stale cloud fetch!
+            const mergedXP = Math.max(currentUser.xp || 0, cloudData.xp || 0);
+            currentUser.xp = mergedXP;
+            currentUser.level = Math.floor(mergedXP / 50) + 1;
+            currentUser.rank = calculateRank(mergedXP).name;
+
+            const academyPct = Math.max(currentUser.progress.academy || 0, (cloudData.progress && cloudData.progress.academy) || 0);
+            const cyberopsPct = Math.max(currentUser.progress.cyberops || 0, (cloudData.progress && cloudData.progress.cyberops) || 0);
+            const cipherPct = Math.max(currentUser.progress.cipher || 0, (cloudData.progress && cloudData.progress.cipher) || 0);
+
+            currentUser.progress = { academy: academyPct, cyberops: cyberopsPct, cipher: cipherPct };
+
+            currentUser.completedAcademyModules = Array.from(new Set([...(currentUser.completedAcademyModules || []), ...(cloudData.completedAcademyModules || [])]));
+            currentUser.completedCyberOpsModules = Array.from(new Set([...(currentUser.completedCyberOpsModules || []), ...(cloudData.completedCyberOpsModules || [])]));
+            currentUser.completedCipherModules = Array.from(new Set([...(currentUser.completedCipherModules || []), ...(cloudData.completedCipherModules || [])]));
+
+            const mergedScores = { ...(currentUser.quizBestScores || {}) };
+            if (cloudData.quizBestScores) {
+                Object.keys(cloudData.quizBestScores).forEach(k => {
+                    mergedScores[k] = Math.max(mergedScores[k] || 0, cloudData.quizBestScores[k] || 0);
+                });
+            }
+            currentUser.quizBestScores = mergedScores;
+        }
 
         const expLvl = cloudData.experienceLevel || currentUser.experienceLevel || 'beginner';
-        const isCyberopsUnlocked = (expLvl === 'intermediate' || expLvl === 'advanced' || (cloudData.xp || 0) >= 300 || academyPct >= 100);
-        const isCipherUnlocked = (expLvl === 'advanced' || (cloudData.xp || 0) >= 600 || cyberopsPct >= 100);
+        const isCyberopsUnlocked = (expLvl === 'intermediate' || expLvl === 'advanced' || (currentUser.xp || 0) >= 300 || currentUser.progress.academy >= 100);
+        const isCipherUnlocked = (expLvl === 'advanced' || (currentUser.xp || 0) >= 600 || currentUser.progress.cyberops >= 100);
 
-        currentUser.xp = typeof cloudData.xp === 'number' ? cloudData.xp : 0;
-        currentUser.level = Math.floor(currentUser.xp / 50) + 1;
-        currentUser.rank = cloudData.rank || calculateRank(currentUser.xp).name;
-        currentUser.progress = { academy: academyPct, cyberops: cyberopsPct, cipher: cipherPct };
         currentUser.unlocked = {
             academy: true,
             cyberops: isCyberopsUnlocked || currentUser.unlocked.cyberops,
             cipher: isCipherUnlocked || currentUser.unlocked.cipher
         };
 
-        currentUser.completedAcademyModules = cloudData.completedAcademyModules || [];
-        currentUser.completedCyberOpsModules = cloudData.completedCyberOpsModules || [];
-        currentUser.completedCipherModules = cloudData.completedCipherModules || [];
-        currentUser.quizBestScores = cloudData.quizBestScores || {};
-
-        if (currentUser.isLoggedIn && currentUser.isRegistered) {
-            saveRegisteredUser(currentUser);
-        }
-        localStorage.setItem(STORAGE_KEY_USER, JSON.stringify(currentUser));
+        saveUser();
         updateUI();
     }
 
