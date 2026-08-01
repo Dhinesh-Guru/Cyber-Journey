@@ -128,7 +128,7 @@
         currentUser.completedCipherModules = Array.from(new Set([...(currentUser.completedCipherModules || []), ...(cloudData.completedCipherModules || [])]));
         currentUser.quizBestScores = { ...(currentUser.quizBestScores || {}), ...(cloudData.quizBestScores || {}) };
 
-        saveUser();
+        localStorage.setItem(STORAGE_KEY_USER, JSON.stringify(currentUser));
         updateUI();
     }
 
@@ -1133,20 +1133,22 @@
         const confirmResetProfileBtn = document.getElementById('confirm-reset-profile-btn');
         if (confirmResetProfileBtn) {
             confirmResetProfileBtn.addEventListener('click', () => {
-                // Reset all progress & XP to 0 Trainee
+                // Reset all progress, scores, & XP to 0 Trainee while preserving clearance level
                 currentUser.xp = 0;
                 currentUser.level = 1;
                 currentUser.rank = 'Cyber Trainee';
-                currentUser.experienceLevel = 'beginner';
                 currentUser.progress = { academy: 0, cyberops: 0, cipher: 0 };
-                currentUser.unlocked = { academy: true, cyberops: false, cipher: false };
-                currentUser.badges.forEach(b => b.unlocked = false);
+                currentUser.completedAcademyModules = [];
+                currentUser.completedCyberOpsModules = [];
+                currentUser.completedCipherModules = [];
+                currentUser.quizBestScores = {};
+                if (currentUser.badges) currentUser.badges.forEach(b => b.unlocked = false);
 
                 saveUser();
                 updateUI();
                 closeModal('reset-profile-modal');
                 playSound('error');
-                showToast('<i class="fa-solid fa-rotate-left highlight"></i> Profile reset to Cyber Trainee (0 XP)!');
+                showToast('<i class="fa-solid fa-rotate-left highlight"></i> Profile reset! You can now re-complete modules to earn XP again.');
             });
         }
 

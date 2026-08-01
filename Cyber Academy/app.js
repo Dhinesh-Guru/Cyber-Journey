@@ -60,15 +60,29 @@
 
     function mergeCloudData(cloudData) {
         if (!cloudData) return;
+
         currentUser.xp = Math.max(currentUser.xp || 0, cloudData.xp || 0);
+        currentUser.level = Math.floor(currentUser.xp / 50) + 1;
+        if (cloudData.rank) currentUser.rank = cloudData.rank;
+
+        if (cloudData.progress) {
+            currentUser.progress = {
+                academy: Math.max(currentUser.progress.academy || 0, cloudData.progress.academy || 0),
+                cyberops: Math.max(currentUser.progress.cyberops || 0, cloudData.progress.cyberops || 0),
+                cipher: Math.max(currentUser.progress.cipher || 0, cloudData.progress.cipher || 0)
+            };
+        }
+
         if (cloudData.completedAcademyModules && Array.isArray(cloudData.completedAcademyModules)) {
             cloudData.completedAcademyModules.forEach(id => completedChapters.add(id));
+            currentUser.completedAcademyModules = Array.from(completedChapters);
         }
+
         if (cloudData.quizBestScores) {
             currentUser.quizBestScores = { ...(currentUser.quizBestScores || {}), ...cloudData.quizBestScores };
         }
-        currentUser.completedAcademyModules = Array.from(completedChapters);
-        saveUser();
+
+        localStorage.setItem(STORAGE_KEY_USER, JSON.stringify(currentUser));
         initUI();
         renderChaptersView();
     }
