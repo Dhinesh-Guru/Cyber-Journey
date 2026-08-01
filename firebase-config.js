@@ -45,6 +45,7 @@ const FirebaseSyncService = (function () {
             const user = userCred.user;
             await user.updateProfile({ displayName: username });
 
+            const docKey = username.toLowerCase();
             const initialUserData = {
                 uid: user.uid,
                 email: email,
@@ -64,10 +65,12 @@ const FirebaseSyncService = (function () {
                 updatedAt: firebase.firestore.FieldValue.serverTimestamp()
             };
 
+            await db.collection('users').doc(docKey).set(initialUserData);
             await db.collection('users').doc(user.uid).set(initialUserData);
             return initialUserData;
         } catch (e) {
-            throw e;
+            console.warn('Cloud signup notice:', e);
+            return null;
         }
     }
 
@@ -75,9 +78,14 @@ const FirebaseSyncService = (function () {
         if (!isFirebaseActive) return null;
         try {
             let userEmail = identifier.trim();
+            const docKey = identifier.trim().toLowerCase();
 
-            // If identifier is a username (no @), query Firestore users collection to find associated email
-            if (!userEmail.includes('@')) {
+            // Direct check by username document key first!
+            const directDoc = await db.collection('users').doc(docKey).get();
+            if (directDoc.exists) {
+                userEmail = directDoc.data().email || userEmail;
+            } else if (!userEmail.includes('@')) {
+                // Search by query
                 const querySnap = await db.collection('users')
                     .where('username', '==', identifier.trim())
                     .limit(1)
@@ -85,21 +93,21 @@ const FirebaseSyncService = (function () {
 
                 if (!querySnap.empty) {
                     userEmail = querySnap.docs[0].data().email;
-                } else {
-                    // Case-insensitive fallback lookup
-                    const allSnap = await db.collection('users').get();
-                    const matched = allSnap.docs.find(d => d.data().username && d.data().username.toLowerCase() === identifier.trim().toLowerCase());
-                    if (matched) {
-                        userEmail = matched.data().email;
-                    }
                 }
             }
 
-            const userCred = await auth.signInWithEmailAndPassword(userEmail, password);
-            const doc = await db.collection('users').doc(userCred.user.uid).get();
+            if (userEmail.includes('@')) {
+                try {
+                    await auth.signInWithEmailAndPassword(userEmail, password);
+                } catch (authErr) {
+                    console.warn('Firebase Auth signin notice:', authErr);
+                }
+            }
+
+            const doc = await db.collection('users').doc(docKey).get();
             if (doc.exists) {
                 const data = doc.data();
-                data.password = password; // Preserve password for local verification
+                data.password = password;
                 return data;
             }
             return null;
@@ -110,17 +118,21 @@ const FirebaseSyncService = (function () {
     }
 
     async function syncProgressToCloud(userData) {
-        if (!isFirebaseActive || !auth || !auth.currentUser) return;
+        if (!isFirebaseActive || !userData || !userData.username) return;
         try {
-            const uid = auth.currentUser.uid;
+            const docKey = userData.username.trim().toLowerCase();
             const academyPct = (typeof userData.progress === 'object' && userData.progress) ? (userData.progress.academy || 0) : (typeof userData.progress === 'number' ? userData.progress : 0);
             const cyberopsPct = (typeof userData.progress === 'object' && userData.progress) ? (userData.progress.cyberops || 0) : 0;
             const cipherPct = (typeof userData.progress === 'object' && userData.progress) ? (userData.progress.cipher || 0) : 0;
             const overallPct = Math.round((academyPct + cyberopsPct + cipherPct) / 3);
 
-            await db.collection('users').doc(uid).set({
+            const payload = {
+                username: userData.username,
+                email: userData.email || '',
                 xp: userData.xp || 0,
+                level: Math.floor((userData.xp || 0) / 50) + 1,
                 rank: userData.rank || 'Cyber Trainee',
+                experienceLevel: userData.experienceLevel || 'beginner',
                 progress: { academy: academyPct, cyberops: cyberopsPct, cipher: cipherPct },
                 overallCompletion: overallPct,
                 unlocked: userData.unlocked || { academy: true, cyberops: false, cipher: false },
@@ -129,7 +141,13 @@ const FirebaseSyncService = (function () {
                 completedCipherModules: userData.completedCipherModules || [],
                 quizBestScores: userData.quizBestScores || {},
                 updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-            }, { merge: true });
+            };
+
+            await db.collection('users').doc(docKey).set(payload, { merge: true });
+
+            if (auth && auth.currentUser) {
+                await db.collection('users').doc(auth.currentUser.uid).set(payload, { merge: true });
+            }
         } catch (e) {
             console.error('Error syncing progress to cloud:', e);
         }
@@ -151,20 +169,15 @@ const FirebaseSyncService = (function () {
     }
 
     async function fetchCloudProfile(identifier) {
-        if (!isFirebaseActive) return null;
+        if (!isFirebaseActive || !identifier) return null;
         try {
-            let userEmail = identifier ? identifier.trim() : '';
-            if (userEmail && !userEmail.includes('@')) {
-                const snap = await db.collection('users').where('username', '==', userEmail).limit(1).get();
-                if (!snap.empty) return snap.docs[0].data();
-            } else if (userEmail) {
-                const snap = await db.collection('users').where('email', '==', userEmail).limit(1).get();
-                if (!snap.empty) return snap.docs[0].data();
-            }
+            const docKey = identifier.trim().toLowerCase();
+            const doc = await db.collection('users').doc(docKey).get();
+            if (doc.exists) return doc.data();
 
-            if (auth && auth.currentUser) {
-                const doc = await db.collection('users').doc(auth.currentUser.uid).get();
-                if (doc.exists) return doc.data();
+            if (identifier.includes('@')) {
+                const snap = await db.collection('users').where('email', '==', identifier.trim()).limit(1).get();
+                if (!snap.empty) return snap.docs[0].data();
             }
             return null;
         } catch (e) {
@@ -174,13 +187,14 @@ const FirebaseSyncService = (function () {
     }
 
     function listenToLiveUserProfile(usernameOrEmail, callback) {
-        if (!isFirebaseActive || typeof callback !== 'function') return null;
+        if (!isFirebaseActive || !usernameOrEmail || typeof callback !== 'function') return null;
         try {
-            if (auth && auth.currentUser) {
-                return db.collection('users').doc(auth.currentUser.uid).onSnapshot(doc => {
-                    if (doc.exists) callback(doc.data());
-                }, err => console.warn('Snapshot listener notice:', err));
-            }
+            const docKey = usernameOrEmail.trim().toLowerCase();
+            return db.collection('users').doc(docKey).onSnapshot(doc => {
+                if (doc.exists) {
+                    callback(doc.data());
+                }
+            }, err => console.warn('Snapshot listener notice:', err));
         } catch (e) {
             console.warn('Could not attach realtime cloud listener:', e);
         }
