@@ -71,21 +71,38 @@
     function mergeCloudData(cloudData) {
         if (!cloudData) return;
 
-        currentUser.xp = typeof cloudData.xp === 'number' ? cloudData.xp : 0;
-        currentUser.level = Math.floor(currentUser.xp / 50) + 1;
-        if (cloudData.rank) currentUser.rank = cloudData.rank;
+        const isCloudReset = (cloudData.xp === 0 && (!cloudData.completedCipherModules || cloudData.completedCipherModules.length === 0) && (!cloudData.quizBestScores || Object.keys(cloudData.quizBestScores).length === 0));
 
-        if (cloudData.progress) {
-            currentUser.progress = {
-                academy: cloudData.progress.academy || 0,
-                cyberops: cloudData.progress.cyberops || 0,
-                cipher: cloudData.progress.cipher || 0
-            };
+        if (isCloudReset) {
+            currentUser.xp = 0;
+            currentUser.level = 1;
+            currentUser.rank = 'Cyber Trainee';
+            currentUser.progress.cipher = 0;
+            completedModules.clear();
+            currentUser.completedCipherModules = [];
+            currentUser.quizBestScores = {};
+        } else {
+            currentUser.xp = Math.max(currentUser.xp || 0, cloudData.xp || 0);
+            currentUser.level = Math.floor(currentUser.xp / 50) + 1;
+            if (cloudData.rank) currentUser.rank = cloudData.rank;
+
+            if (cloudData.progress) {
+                currentUser.progress.cipher = Math.max(currentUser.progress.cipher || 0, cloudData.progress.cipher || 0);
+            }
+
+            if (cloudData.completedCipherModules && Array.isArray(cloudData.completedCipherModules)) {
+                cloudData.completedCipherModules.forEach(id => completedModules.add(id));
+            }
+            currentUser.completedCipherModules = Array.from(completedModules);
+
+            const mergedScores = { ...(currentUser.quizBestScores || {}) };
+            if (cloudData.quizBestScores) {
+                Object.keys(cloudData.quizBestScores).forEach(qId => {
+                    mergedScores[qId] = Math.max(mergedScores[qId] || 0, cloudData.quizBestScores[qId] || 0);
+                });
+            }
+            currentUser.quizBestScores = mergedScores;
         }
-
-        completedModules = new Set(cloudData.completedCipherModules || []);
-        currentUser.completedCipherModules = Array.from(completedModules);
-        currentUser.quizBestScores = cloudData.quizBestScores || {};
 
         localStorage.setItem(STORAGE_KEY_USER, JSON.stringify(currentUser));
         initUI();
