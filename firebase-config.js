@@ -38,7 +38,7 @@ const FirebaseSyncService = (function () {
     }
 
     // --- Cloud Auth Actions ---
-    async function signUpWithCloud(email, password, username) {
+    async function signUpWithCloud(email, password, username, userData = {}) {
         if (!isFirebaseActive) return null;
         try {
             const userCred = await auth.createUserWithEmailAndPassword(email, password);
@@ -49,13 +49,18 @@ const FirebaseSyncService = (function () {
                 uid: user.uid,
                 email: email,
                 username: username,
-                xp: 0,
-                level: 1,
-                rank: 'Cyber Trainee',
-                experienceLevel: 'beginner',
-                progress: { academy: 0, cyberops: 0, cipher: 0 },
-                unlocked: { academy: true, cyberops: false, cipher: false },
-                badges: [],
+                xp: userData.xp || 50,
+                level: userData.level || 1,
+                rank: userData.rank || 'Cyber Trainee',
+                experienceLevel: userData.experienceLevel || 'beginner',
+                progress: userData.progress || { academy: 0, cyberops: 0, cipher: 0 },
+                overallCompletion: 0,
+                unlocked: userData.unlocked || { academy: true, cyberops: false, cipher: false },
+                completedAcademyModules: userData.completedAcademyModules || [],
+                completedCyberOpsModules: userData.completedCyberOpsModules || [],
+                completedCipherModules: userData.completedCipherModules || [],
+                quizBestScores: userData.quizBestScores || {},
+                badges: userData.badges || [],
                 updatedAt: firebase.firestore.FieldValue.serverTimestamp()
             };
 
@@ -145,12 +150,51 @@ const FirebaseSyncService = (function () {
         }
     }
 
+    async function fetchCloudProfile(identifier) {
+        if (!isFirebaseActive) return null;
+        try {
+            let userEmail = identifier ? identifier.trim() : '';
+            if (userEmail && !userEmail.includes('@')) {
+                const snap = await db.collection('users').where('username', '==', userEmail).limit(1).get();
+                if (!snap.empty) return snap.docs[0].data();
+            } else if (userEmail) {
+                const snap = await db.collection('users').where('email', '==', userEmail).limit(1).get();
+                if (!snap.empty) return snap.docs[0].data();
+            }
+
+            if (auth && auth.currentUser) {
+                const doc = await db.collection('users').doc(auth.currentUser.uid).get();
+                if (doc.exists) return doc.data();
+            }
+            return null;
+        } catch (e) {
+            console.error('Error fetching cloud profile:', e);
+            return null;
+        }
+    }
+
+    function listenToLiveUserProfile(usernameOrEmail, callback) {
+        if (!isFirebaseActive || typeof callback !== 'function') return null;
+        try {
+            if (auth && auth.currentUser) {
+                return db.collection('users').doc(auth.currentUser.uid).onSnapshot(doc => {
+                    if (doc.exists) callback(doc.data());
+                }, err => console.warn('Snapshot listener notice:', err));
+            }
+        } catch (e) {
+            console.warn('Could not attach realtime cloud listener:', e);
+        }
+        return null;
+    }
+
     return {
         init,
         signUpWithCloud,
         signInWithCloud,
         syncProgressToCloud,
         fetchCloudLeaderboard,
+        fetchCloudProfile,
+        listenToLiveUserProfile,
         isCloudActive: () => isFirebaseActive
     };
 })();

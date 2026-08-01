@@ -45,8 +45,21 @@
     let unlockedRooms = new Set(currentUser.unlockedCipherRooms || ['room_1']);
     let completedRooms = new Set(currentUser.completedCipherRooms || []);
 
-    document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', async () => {
         if (!checkAccessControl()) return;
+
+        if (currentUser.isLoggedIn && currentUser.isRegistered && typeof FirebaseSyncService !== 'undefined' && FirebaseSyncService.isCloudActive()) {
+            try {
+                const cloudData = await FirebaseSyncService.fetchCloudProfile(currentUser.username || currentUser.email);
+                if (cloudData) {
+                    mergeCloudData(cloudData);
+                }
+                FirebaseSyncService.listenToLiveUserProfile(currentUser.username, (liveData) => {
+                    if (liveData) mergeCloudData(liveData);
+                });
+            } catch (e) {}
+        }
+
         initUI();
         initNavigation();
         renderRoomsView();
@@ -54,6 +67,21 @@
         initToolsView();
         initModalEvents();
     });
+
+    function mergeCloudData(cloudData) {
+        if (!cloudData) return;
+        currentUser.xp = Math.max(currentUser.xp || 0, cloudData.xp || 0);
+        if (cloudData.completedCipherModules && Array.isArray(cloudData.completedCipherModules)) {
+            cloudData.completedCipherModules.forEach(id => completedModules.add(id));
+        }
+        if (cloudData.quizBestScores) {
+            currentUser.quizBestScores = { ...(currentUser.quizBestScores || {}), ...cloudData.quizBestScores };
+        }
+        currentUser.completedCipherModules = Array.from(completedModules);
+        saveUser();
+        initUI();
+        renderModulesView();
+    }
 
     function checkAccessControl() {
         const isCyberopsComplete = (currentUser.progress && currentUser.progress.cyberops >= 100);

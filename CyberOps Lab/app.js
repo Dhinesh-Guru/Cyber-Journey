@@ -39,8 +39,21 @@
     let currentUser = loadUser();
     let completedModules = new Set(currentUser.completedCyberOpsModules || []);
 
-    document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', async () => {
         if (!checkAccessControl()) return;
+
+        if (currentUser.isLoggedIn && currentUser.isRegistered && typeof FirebaseSyncService !== 'undefined' && FirebaseSyncService.isCloudActive()) {
+            try {
+                const cloudData = await FirebaseSyncService.fetchCloudProfile(currentUser.username || currentUser.email);
+                if (cloudData) {
+                    mergeCloudData(cloudData);
+                }
+                FirebaseSyncService.listenToLiveUserProfile(currentUser.username, (liveData) => {
+                    if (liveData) mergeCloudData(liveData);
+                });
+            } catch (e) {}
+        }
+
         initUI();
         initNavigation();
         renderModulesView();
@@ -48,6 +61,21 @@
         initIncidentView();
         initModalEvents();
     });
+
+    function mergeCloudData(cloudData) {
+        if (!cloudData) return;
+        currentUser.xp = Math.max(currentUser.xp || 0, cloudData.xp || 0);
+        if (cloudData.completedCyberOpsModules && Array.isArray(cloudData.completedCyberOpsModules)) {
+            cloudData.completedCyberOpsModules.forEach(id => completedModules.add(id));
+        }
+        if (cloudData.quizBestScores) {
+            currentUser.quizBestScores = { ...(currentUser.quizBestScores || {}), ...cloudData.quizBestScores };
+        }
+        currentUser.completedCyberOpsModules = Array.from(completedModules);
+        saveUser();
+        initUI();
+        renderModulesView();
+    }
 
     function checkAccessControl() {
         const isAcademyComplete = (currentUser.progress && currentUser.progress.academy >= 100);

@@ -55,11 +55,29 @@
     let pendingResetEmail = null;
 
     // --- Initialization ---
-    document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', async () => {
         initMatrixCanvas();
         initAudioEngine();
         updateUI();
         setupEventListeners();
+
+        // Real-Time Cloud Sync on Page Load & Live Sync Listener
+        if (currentUser.isLoggedIn && currentUser.isRegistered && typeof FirebaseSyncService !== 'undefined' && FirebaseSyncService.isCloudActive()) {
+            try {
+                const cloudData = await FirebaseSyncService.fetchCloudProfile(currentUser.username || currentUser.email);
+                if (cloudData) {
+                    mergeCloudDataIntoLocal(cloudData);
+                }
+                
+                FirebaseSyncService.listenToLiveUserProfile(currentUser.username, (liveData) => {
+                    if (liveData) {
+                        mergeCloudDataIntoLocal(liveData);
+                    }
+                });
+            } catch (syncErr) {
+                console.warn('Initial cloud sync notice:', syncErr);
+            }
+        }
 
         // Enforce Signup modal on first load if user is not logged in
         if (!currentUser.isLoggedIn) {
@@ -79,6 +97,40 @@
             openModal('reset-link-modal');
         }
     });
+
+    function mergeCloudDataIntoLocal(cloudData) {
+        if (!cloudData) return;
+        
+        const academyPct = (typeof cloudData.progress === 'object' && cloudData.progress) ? (cloudData.progress.academy || 0) : 0;
+        const cyberopsPct = (typeof cloudData.progress === 'object' && cloudData.progress) ? (cloudData.progress.cyberops || 0) : 0;
+        const cipherPct = (typeof cloudData.progress === 'object' && cloudData.progress) ? (cloudData.progress.cipher || 0) : 0;
+
+        const expLvl = cloudData.experienceLevel || currentUser.experienceLevel || 'beginner';
+        const isCyberopsUnlocked = (expLvl === 'intermediate' || expLvl === 'advanced' || (cloudData.xp || 0) >= 300 || academyPct >= 100);
+        const isCipherUnlocked = (expLvl === 'advanced' || (cloudData.xp || 0) >= 600 || cyberopsPct >= 100);
+
+        currentUser.xp = Math.max(currentUser.xp || 0, cloudData.xp || 0);
+        currentUser.level = Math.max(currentUser.level || 1, Math.floor(currentUser.xp / 50) + 1);
+        currentUser.rank = cloudData.rank || calculateRank(currentUser.xp).name;
+        currentUser.progress = {
+            academy: Math.max(currentUser.progress.academy || 0, academyPct),
+            cyberops: Math.max(currentUser.progress.cyberops || 0, cyberopsPct),
+            cipher: Math.max(currentUser.progress.cipher || 0, cipherPct)
+        };
+        currentUser.unlocked = {
+            academy: true,
+            cyberops: isCyberopsUnlocked || currentUser.unlocked.cyberops,
+            cipher: isCipherUnlocked || currentUser.unlocked.cipher
+        };
+
+        currentUser.completedAcademyModules = Array.from(new Set([...(currentUser.completedAcademyModules || []), ...(cloudData.completedAcademyModules || [])]));
+        currentUser.completedCyberOpsModules = Array.from(new Set([...(currentUser.completedCyberOpsModules || []), ...(cloudData.completedCyberOpsModules || [])]));
+        currentUser.completedCipherModules = Array.from(new Set([...(currentUser.completedCipherModules || []), ...(cloudData.completedCipherModules || [])]));
+        currentUser.quizBestScores = { ...(currentUser.quizBestScores || {}), ...(cloudData.quizBestScores || {}) };
+
+        saveUser();
+        updateUI();
+    }
 
     // --- Auth Forms Clear Helper ---
     function resetAuthForms() {

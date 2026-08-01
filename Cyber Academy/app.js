@@ -39,13 +39,39 @@
     let currentUser = loadUser();
     let completedChapters = new Set(currentUser.completedAcademyModules || []);
 
-    document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', async () => {
+        if (currentUser.isLoggedIn && currentUser.isRegistered && typeof FirebaseSyncService !== 'undefined' && FirebaseSyncService.isCloudActive()) {
+            try {
+                const cloudData = await FirebaseSyncService.fetchCloudProfile(currentUser.username || currentUser.email);
+                if (cloudData) {
+                    mergeCloudData(cloudData);
+                }
+                FirebaseSyncService.listenToLiveUserProfile(currentUser.username, (liveData) => {
+                    if (liveData) mergeCloudData(liveData);
+                });
+            } catch (e) {}
+        }
         initUI();
         initNavigation();
         renderChaptersView();
         initMiniGamesView();
         initCyberOSView();
     });
+
+    function mergeCloudData(cloudData) {
+        if (!cloudData) return;
+        currentUser.xp = Math.max(currentUser.xp || 0, cloudData.xp || 0);
+        if (cloudData.completedAcademyModules && Array.isArray(cloudData.completedAcademyModules)) {
+            cloudData.completedAcademyModules.forEach(id => completedChapters.add(id));
+        }
+        if (cloudData.quizBestScores) {
+            currentUser.quizBestScores = { ...(currentUser.quizBestScores || {}), ...cloudData.quizBestScores };
+        }
+        currentUser.completedAcademyModules = Array.from(completedChapters);
+        saveUser();
+        initUI();
+        renderChaptersView();
+    }
 
     function saveUser() {
         currentUser.completedAcademyModules = Array.from(completedChapters);
