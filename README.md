@@ -113,7 +113,7 @@ Run a local HTTP server from the project root directory:
 
 ```bash
 # Python 3 HTTP Server
-python -m http.server 8085 --directory "d:\Antigravity DG\CyberJourney"
+python -m http.server 8085 --directory .
 ```
 
 Open your browser at: [http://localhost:8085/index.html](http://localhost:8085/index.html)
