@@ -381,7 +381,7 @@
                     ` : `
                         <p style="color:var(--text-muted); font-size:0.95rem; margin:14px 0;">(Previous Best Score: ${quizRes.previousBest}/${ch.questions.length} — No new XP gained. Beat your high score to earn more XP!)</p>
                     `}
-                    <button class="cyber-primary-btn close-chapter-modal" style="margin-top:16px;">RETURN TO MODULES</button>
+                    <button class="cyber-primary-btn close-chapter-modal" style="margin-top:20px; padding:12px 28px; width:auto; display:inline-block; white-space:nowrap; font-size:0.95rem;"><i class="fa-solid fa-arrow-left"></i> RETURN TO MODULES</button>
                 </div>
             `;
             modal.querySelectorAll('.close-chapter-modal').forEach(btn => btn.addEventListener('click', hideModal));

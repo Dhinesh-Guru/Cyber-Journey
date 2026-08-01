@@ -113,6 +113,12 @@
         if (!user || !user.username || !user.isRegistered || user.username.startsWith('Guest Agent_') || user.username.startsWith('Guest_')) return;
         let users = getRegisteredUsers();
         const existingIndex = users.findIndex(u => u.username.toLowerCase() === user.username.toLowerCase());
+        
+        const academyPct = (typeof user.progress === 'object' && user.progress) ? (user.progress.academy || 0) : (typeof user.progress === 'number' ? user.progress : 0);
+        const cyberopsPct = (typeof user.progress === 'object' && user.progress) ? (user.progress.cyberops || 0) : 0;
+        const cipherPct = (typeof user.progress === 'object' && user.progress) ? (user.progress.cipher || 0) : 0;
+        const overallPct = Math.round((academyPct + cyberopsPct + cipherPct) / 3);
+
         const userData = {
             username: user.username,
             email: user.email,
@@ -121,7 +127,14 @@
             avatar: user.avatar || null,
             rank: user.rank,
             xp: user.xp,
-            progress: Math.round((user.progress.academy + user.progress.cyberops + user.progress.cipher) / 3),
+            progress: { academy: academyPct, cyberops: cyberopsPct, cipher: cipherPct },
+            overallCompletion: overallPct,
+            unlocked: user.unlocked || { academy: true, cyberops: false, cipher: false },
+            experienceLevel: user.experienceLevel || 'beginner',
+            completedAcademyModules: user.completedAcademyModules || [],
+            completedCyberOpsModules: user.completedCyberOpsModules || [],
+            completedCipherModules: user.completedCipherModules || [],
+            quizBestScores: user.quizBestScores || {},
             date: new Date().toISOString()
         };
 
@@ -272,7 +285,12 @@
         const data = localStorage.getItem(STORAGE_KEY_USER);
         if (data) {
             try {
-                return JSON.parse(data);
+                const parsed = JSON.parse(data);
+                if (typeof parsed.progress !== 'object' || !parsed.progress) {
+                    const val = typeof parsed.progress === 'number' ? parsed.progress : 0;
+                    parsed.progress = { academy: val, cyberops: 0, cipher: 0 };
+                }
+                return parsed;
             } catch (e) {
                 console.error('Failed to parse user state', e);
             }
@@ -640,6 +658,10 @@
             }
 
             // Restore user state on successful authentication
+            const academyPct = (typeof foundUser.progress === 'object' && foundUser.progress) ? (foundUser.progress.academy || 0) : (typeof foundUser.progress === 'number' ? foundUser.progress : 0);
+            const cyberopsPct = (typeof foundUser.progress === 'object' && foundUser.progress) ? (foundUser.progress.cyberops || 0) : 0;
+            const cipherPct = (typeof foundUser.progress === 'object' && foundUser.progress) ? (foundUser.progress.cipher || 0) : 0;
+
             currentUser = {
                 ...DEFAULT_USER,
                 isLoggedIn: true,
@@ -651,7 +673,14 @@
                 avatar: foundUser.avatar || null,
                 xp: foundUser.xp || 0,
                 rank: foundUser.rank || 'Cyber Trainee',
-                level: Math.floor((foundUser.xp || 0) / 50) + 1
+                level: Math.floor((foundUser.xp || 0) / 50) + 1,
+                experienceLevel: foundUser.experienceLevel || 'beginner',
+                progress: { academy: academyPct, cyberops: cyberopsPct, cipher: cipherPct },
+                unlocked: foundUser.unlocked || { academy: true, cyberops: (foundUser.xp >= 300), cipher: (foundUser.xp >= 600) },
+                completedAcademyModules: foundUser.completedAcademyModules || [],
+                completedCyberOpsModules: foundUser.completedCyberOpsModules || [],
+                completedCipherModules: foundUser.completedCipherModules || [],
+                quizBestScores: foundUser.quizBestScores || {}
             };
 
             if (currentUser.xp >= 300) currentUser.unlocked.cyberops = true;
@@ -1141,12 +1170,15 @@
 
         tbody.innerHTML = users.map((u, i) => {
             const isUser = currentUser.isLoggedIn && currentUser.isRegistered && u.username.toLowerCase() === currentUser.username.toLowerCase();
+            const completionPct = (typeof u.overallCompletion === 'number') ? u.overallCompletion : (
+                typeof u.progress === 'object' && u.progress ? Math.round(((u.progress.academy || 0) + (u.progress.cyberops || 0) + (u.progress.cipher || 0)) / 3) : (typeof u.progress === 'number' ? u.progress : 0)
+            );
             return `
                 <tr class="${isUser ? 'user-row' : ''}">
                     <td>#${i + 1}</td>
                     <td><strong>${u.username}${isUser ? ' (YOU)' : ''}</strong></td>
                     <td><span class="badge-level ${u.rank.includes('Defender') ? 'advanced-badge' : 'intermediate-badge'}">${u.rank}</span></td>
-                    <td>${u.progress}%</td>
+                    <td>${completionPct}%</td>
                     <td><strong class="highlight">${u.xp} XP</strong></td>
                 </tr>
             `;

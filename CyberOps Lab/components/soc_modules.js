@@ -8,11 +8,9 @@ const SOCModulesEngine = (function () {
     function renderModulesGrid(container, completedModulesSet, userClearance) {
         if (!container) return;
 
-        const isPreunlocked = (userClearance === 'intermediate' || userClearance === 'advanced');
-
         container.innerHTML = CYBEROPS_MODULES.map((mod, idx) => {
             const isCompleted = completedModulesSet.has(mod.id);
-            const isUnlocked = isPreunlocked || idx === 0 || completedModulesSet.has(CYBEROPS_MODULES[idx - 1]?.id);
+            const isUnlocked = idx === 0 || completedModulesSet.has(CYBEROPS_MODULES[idx - 1]?.id);
 
             return `
                 <div class="soc-module-card ${isUnlocked ? '' : 'locked'} ${isCompleted ? 'completed' : ''}">

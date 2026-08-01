@@ -84,10 +84,16 @@ const FirebaseSyncService = (function () {
         if (!isFirebaseActive || !auth || !auth.currentUser) return;
         try {
             const uid = auth.currentUser.uid;
+            const academyPct = (typeof userData.progress === 'object' && userData.progress) ? (userData.progress.academy || 0) : (typeof userData.progress === 'number' ? userData.progress : 0);
+            const cyberopsPct = (typeof userData.progress === 'object' && userData.progress) ? (userData.progress.cyberops || 0) : 0;
+            const cipherPct = (typeof userData.progress === 'object' && userData.progress) ? (userData.progress.cipher || 0) : 0;
+            const overallPct = Math.round((academyPct + cyberopsPct + cipherPct) / 3);
+
             await db.collection('users').doc(uid).set({
                 xp: userData.xp || 0,
                 rank: userData.rank || 'Cyber Trainee',
-                progress: userData.progress || { academy: 0, cyberops: 0, cipher: 0 },
+                progress: { academy: academyPct, cyberops: cyberopsPct, cipher: cipherPct },
+                overallCompletion: overallPct,
                 unlocked: userData.unlocked || { academy: true, cyberops: false, cipher: false },
                 completedAcademyModules: userData.completedAcademyModules || [],
                 completedCyberOpsModules: userData.completedCyberOpsModules || [],
