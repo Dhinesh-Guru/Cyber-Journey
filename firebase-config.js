@@ -1,0 +1,132 @@
+/* ==========================================================================
+   CyberJourney - Firebase Cloud Sync & Configuration Manager
+   ========================================================================== */
+
+const FIREBASE_CONFIG = {
+    apiKey: "YOUR_FIREBASE_API_KEY",
+    authDomain: "cyber-journey-demo.firebaseapp.com",
+    projectId: "cyber-journey-demo",
+    storageBucket: "cyber-journey-demo.appspot.com",
+    messagingSenderId: "123456789",
+    appId: "1:123456789:web:abcdef123456"
+};
+
+// --- Firebase Cloud Bridge Service ---
+const FirebaseSyncService = (function () {
+    'use strict';
+
+    let app = null;
+    let auth = null;
+    let db = null;
+    let isFirebaseActive = false;
+
+    function init() {
+        if (typeof firebase !== 'undefined' && FIREBASE_CONFIG.apiKey !== "YOUR_FIREBASE_API_KEY") {
+            try {
+                app = firebase.initializeApp(FIREBASE_CONFIG);
+                auth = firebase.auth();
+                db = firebase.firestore();
+                isFirebaseActive = true;
+                console.log('⚡ Firebase Cloud Sync Active!');
+            } catch (e) {
+                console.warn('Firebase initialization error, falling back to LocalStorage:', e);
+            }
+        } else {
+            console.log('ℹ️ Running in LocalStorage mode. To enable Firebase multi-device Cloud Sync, add your keys in firebase-config.js');
+        }
+    }
+
+    // --- Cloud Auth Actions ---
+    async function signUpWithCloud(email, password, username) {
+        if (!isFirebaseActive) return null;
+        try {
+            const userCred = await auth.createUserWithEmailAndPassword(email, password);
+            const user = userCred.user;
+            await user.updateProfile({ displayName: username });
+
+            const initialUserData = {
+                uid: user.uid,
+                email: email,
+                username: username,
+                xp: 0,
+                level: 1,
+                rank: 'Cyber Trainee',
+                experienceLevel: 'beginner',
+                progress: { academy: 0, cyberops: 0, cipher: 0 },
+                unlocked: { academy: true, cyberops: false, cipher: false },
+                badges: [],
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            };
+
+            await db.collection('users').doc(user.uid).set(initialUserData);
+            return initialUserData;
+        } catch (e) {
+            throw e;
+        }
+    }
+
+    async function signInWithCloud(email, password) {
+        if (!isFirebaseActive) return null;
+        try {
+            const userCred = await auth.signInWithEmailAndPassword(email, password);
+            const doc = await db.collection('users').doc(userCred.user.uid).get();
+            if (doc.exists) {
+                return doc.data();
+            }
+            return null;
+        } catch (e) {
+            throw e;
+        }
+    }
+
+    async function syncProgressToCloud(userData) {
+        if (!isFirebaseActive || !auth || !auth.currentUser) return;
+        try {
+            const uid = auth.currentUser.uid;
+            await db.collection('users').doc(uid).set({
+                xp: userData.xp || 0,
+                rank: userData.rank || 'Cyber Trainee',
+                progress: userData.progress || { academy: 0, cyberops: 0, cipher: 0 },
+                unlocked: userData.unlocked || { academy: true, cyberops: false, cipher: false },
+                completedAcademyModules: userData.completedAcademyModules || [],
+                completedCyberOpsModules: userData.completedCyberOpsModules || [],
+                completedCipherModules: userData.completedCipherModules || [],
+                quizBestScores: userData.quizBestScores || {},
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            }, { merge: true });
+        } catch (e) {
+            console.error('Error syncing progress to cloud:', e);
+        }
+    }
+
+    async function fetchCloudLeaderboard() {
+        if (!isFirebaseActive) return [];
+        try {
+            const snapshot = await db.collection('users')
+                .orderBy('xp', 'desc')
+                .limit(20)
+                .get();
+
+            return snapshot.docs.map(doc => doc.data());
+        } catch (e) {
+            console.error('Error fetching cloud leaderboard:', e);
+            return [];
+        }
+    }
+
+    return {
+        init,
+        signUpWithCloud,
+        signInWithCloud,
+        syncProgressToCloud,
+        fetchCloudLeaderboard,
+        isCloudActive: () => isFirebaseActive
+    };
+})();
+
+// Auto-initialize when loaded
+if (typeof document !== 'undefined') {
+    document.addEventListener('DOMContentLoaded', () => {
+        FirebaseSyncService.init();
+    });
+}
