@@ -797,7 +797,7 @@
             // Sync account creation to Firebase Cloud
             if (typeof FirebaseSyncService !== 'undefined' && FirebaseSyncService.isCloudActive()) {
                 try {
-                    await FirebaseSyncService.signUpWithCloud(email, password, username);
+                    await FirebaseSyncService.signUpWithCloud(email, password, username, currentUser);
                 } catch (cloudErr) {
                     console.warn('Firebase Cloud signup notice:', cloudErr);
                 }

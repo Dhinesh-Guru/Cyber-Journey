@@ -39,17 +39,16 @@ const FirebaseSyncService = (function () {
 
     // --- Cloud Auth Actions ---
     async function signUpWithCloud(email, password, username, userData = {}) {
-        if (!isFirebaseActive) return null;
+        if (!isFirebaseActive || !username) return null;
         try {
-            const userCred = await auth.createUserWithEmailAndPassword(email, password);
-            const user = userCred.user;
-            await user.updateProfile({ displayName: username });
+            const userKey = username.trim().toLowerCase();
+            const emailKey = (email || '').trim().toLowerCase();
 
-            const docKey = username.toLowerCase();
             const initialUserData = {
-                uid: user.uid,
-                email: email,
+                email: email || '',
                 username: username,
+                password: password || '',
+                passwordHistory: userData.passwordHistory || [password || ''],
                 xp: userData.xp || 50,
                 level: userData.level || 1,
                 rank: userData.rank || 'Cyber Trainee',
@@ -65,54 +64,80 @@ const FirebaseSyncService = (function () {
                 updatedAt: firebase.firestore.FieldValue.serverTimestamp()
             };
 
-            await db.collection('users').doc(docKey).set(initialUserData);
-            await db.collection('users').doc(user.uid).set(initialUserData);
+            // Attempt Firebase Auth in background
+            try {
+                if (email && password && email.includes('@')) {
+                    const userCred = await auth.createUserWithEmailAndPassword(email, password);
+                    if (userCred && userCred.user) {
+                        initialUserData.uid = userCred.user.uid;
+                        await userCred.user.updateProfile({ displayName: username });
+                    }
+                }
+            } catch (authErr) {
+                console.warn('Firebase Auth user creation notice:', authErr);
+            }
+
+            await db.collection('users').doc(userKey).set(initialUserData, { merge: true });
+            if (emailKey && emailKey.includes('@')) {
+                await db.collection('users').doc(emailKey).set(initialUserData, { merge: true });
+            }
+            if (initialUserData.uid) {
+                await db.collection('users').doc(initialUserData.uid).set(initialUserData, { merge: true });
+            }
+
             return initialUserData;
         } catch (e) {
-            console.warn('Cloud signup notice:', e);
+            console.error('Cloud signup error:', e);
             return null;
         }
     }
 
     async function signInWithCloud(identifier, password) {
-        if (!isFirebaseActive) return null;
+        if (!isFirebaseActive || !identifier) return null;
         try {
-            let userEmail = identifier.trim();
-            const docKey = identifier.trim().toLowerCase();
+            const idKey = identifier.trim().toLowerCase();
 
-            // Direct check by username document key first!
-            const directDoc = await db.collection('users').doc(docKey).get();
-            if (directDoc.exists) {
-                userEmail = directDoc.data().email || userEmail;
-            } else if (!userEmail.includes('@')) {
-                // Search by query
-                const querySnap = await db.collection('users')
-                    .where('username', '==', identifier.trim())
-                    .limit(1)
-                    .get();
+            // 1. Direct document lookup by username or email key
+            let doc = await db.collection('users').doc(idKey).get();
+            let data = doc.exists ? doc.data() : null;
 
-                if (!querySnap.empty) {
-                    userEmail = querySnap.docs[0].data().email;
+            // 2. If direct key lookup missed, search Firestore collection case-insensitively
+            if (!data) {
+                const snap = await db.collection('users').get();
+                const matched = snap.docs.find(d => {
+                    const dData = d.data();
+                    const uName = (dData.username || '').toLowerCase();
+                    const uEmail = (dData.email || '').toLowerCase();
+                    return uName === idKey || uEmail === idKey;
+                });
+
+                if (matched) {
+                    data = matched.data();
                 }
             }
 
-            if (userEmail.includes('@')) {
-                try {
-                    await auth.signInWithEmailAndPassword(userEmail, password);
-                } catch (authErr) {
-                    console.warn('Firebase Auth signin notice:', authErr);
+            // 3. Password Verification
+            if (data) {
+                if (data.password && data.password !== password) {
+                    console.warn('Cloud login password mismatch');
+                    return null; // Invalid password
                 }
-            }
 
-            const doc = await db.collection('users').doc(docKey).get();
-            if (doc.exists) {
-                const data = doc.data();
-                data.password = password;
+                // Attempt Firebase Auth signin in background if email is present
+                if (data.email && data.email.includes('@')) {
+                    try {
+                        await auth.signInWithEmailAndPassword(data.email, password);
+                    } catch (aErr) {
+                        console.warn('Firebase Auth background signin notice:', aErr);
+                    }
+                }
+
                 return data;
             }
+
             return null;
         } catch (e) {
-            console.error('Firebase cloud login failed:', e);
+            console.error('Firebase cloud login error:', e);
             return null;
         }
     }
@@ -120,7 +145,9 @@ const FirebaseSyncService = (function () {
     async function syncProgressToCloud(userData) {
         if (!isFirebaseActive || !userData || !userData.username) return;
         try {
-            const docKey = userData.username.trim().toLowerCase();
+            const userKey = userData.username.trim().toLowerCase();
+            const emailKey = (userData.email || '').trim().toLowerCase();
+
             const academyPct = (typeof userData.progress === 'object' && userData.progress) ? (userData.progress.academy || 0) : (typeof userData.progress === 'number' ? userData.progress : 0);
             const cyberopsPct = (typeof userData.progress === 'object' && userData.progress) ? (userData.progress.cyberops || 0) : 0;
             const cipherPct = (typeof userData.progress === 'object' && userData.progress) ? (userData.progress.cipher || 0) : 0;
@@ -129,6 +156,7 @@ const FirebaseSyncService = (function () {
             const payload = {
                 username: userData.username,
                 email: userData.email || '',
+                password: userData.password || '',
                 xp: userData.xp || 0,
                 level: Math.floor((userData.xp || 0) / 50) + 1,
                 rank: userData.rank || 'Cyber Trainee',
@@ -143,8 +171,10 @@ const FirebaseSyncService = (function () {
                 updatedAt: firebase.firestore.FieldValue.serverTimestamp()
             };
 
-            await db.collection('users').doc(docKey).set(payload, { merge: true });
-
+            await db.collection('users').doc(userKey).set(payload, { merge: true });
+            if (emailKey && emailKey.includes('@')) {
+                await db.collection('users').doc(emailKey).set(payload, { merge: true });
+            }
             if (auth && auth.currentUser) {
                 await db.collection('users').doc(auth.currentUser.uid).set(payload, { merge: true });
             }
