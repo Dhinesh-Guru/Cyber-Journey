@@ -49,17 +49,57 @@
 
     function saveUser() {
         currentUser.completedAcademyModules = Array.from(completedChapters);
+        
+        // Calculate Academy Progress % (20% per completed chapter out of 5 main chapters)
+        const mainChapterCount = Array.from(completedChapters).filter(id => id !== 'final_exam').length;
+        const pct = Math.min(100, Math.round((mainChapterCount / 5) * 100));
+        currentUser.progress.academy = pct;
+
+        if (pct >= 100) {
+            currentUser.unlocked.cyberops = true;
+        }
+
         localStorage.setItem(STORAGE_KEY_USER, JSON.stringify(currentUser));
+
         if (currentUser.isRegistered && currentUser.username) {
             try {
                 let users = JSON.parse(localStorage.getItem(STORAGE_KEY_REGISTERED_USERS) || '[]');
                 const idx = users.findIndex(u => u.username.toLowerCase() === currentUser.username.toLowerCase());
+                
+                const overallPct = Math.round((currentUser.progress.academy + (currentUser.progress.cyberops || 0) + (currentUser.progress.cipher || 0)) / 3);
+                
+                const updatedObj = {
+                    username: currentUser.username,
+                    email: currentUser.email,
+                    password: currentUser.password,
+                    passwordHistory: currentUser.passwordHistory || [currentUser.password],
+                    avatar: currentUser.avatar || null,
+                    rank: currentUser.rank,
+                    xp: currentUser.xp,
+                    progress: { ...currentUser.progress },
+                    overallCompletion: overallPct,
+                    unlocked: { ...currentUser.unlocked },
+                    experienceLevel: currentUser.experienceLevel || 'beginner',
+                    completedAcademyModules: currentUser.completedAcademyModules || [],
+                    completedCyberOpsModules: currentUser.completedCyberOpsModules || [],
+                    completedCipherModules: currentUser.completedCipherModules || [],
+                    quizBestScores: currentUser.quizBestScores || {},
+                    date: new Date().toISOString()
+                };
+
                 if (idx >= 0) {
-                    users[idx].xp = currentUser.xp;
-                    users[idx].progress = Math.round((currentUser.progress.academy + currentUser.progress.cyberops + currentUser.progress.cipher) / 3);
-                    localStorage.setItem(STORAGE_KEY_REGISTERED_USERS, JSON.stringify(users));
+                    users[idx] = updatedObj;
+                } else {
+                    users.push(updatedObj);
                 }
-            } catch (e) {}
+                localStorage.setItem(STORAGE_KEY_REGISTERED_USERS, JSON.stringify(users));
+            } catch (e) {
+                console.error('Error updating registered users in Cyber Academy', e);
+            }
+        }
+
+        if (typeof FirebaseSyncService !== 'undefined' && FirebaseSyncService.isCloudActive()) {
+            FirebaseSyncService.syncProgressToCloud(currentUser);
         }
     }
 
@@ -68,13 +108,15 @@
         if (!currentUser.quizBestScores) currentUser.quizBestScores = {};
 
         const previousBest = currentUser.quizBestScores[quizId] || 0;
-        const xpPerQuestion = Math.round(maxQuizXP / totalQuestions);
+        const xpPerQuestion = maxQuizXP / totalQuestions;
         let gainedXP = 0;
         let isNewHigh = false;
 
         if (correctCount > previousBest) {
-            const diffCorrect = correctCount - previousBest;
-            gainedXP = diffCorrect * xpPerQuestion;
+            const previousEarned = Math.round(previousBest * xpPerQuestion);
+            const currentEarned = Math.round(correctCount * xpPerQuestion);
+            gainedXP = currentEarned - previousEarned;
+
             currentUser.xp += gainedXP;
             currentUser.quizBestScores[quizId] = correctCount;
             isNewHigh = true;
@@ -92,15 +134,6 @@
             if (b) b.unlocked = true;
         }
 
-        // Calculate Academy Progress % (20% per completed chapter out of 5 main chapters)
-        const mainChapterCount = Array.from(completedChapters).filter(id => id !== 'final_exam').length;
-        const pct = Math.min(100, Math.round((mainChapterCount / 5) * 100));
-        currentUser.progress.academy = pct;
-
-        if (pct >= 100) {
-            currentUser.unlocked.cyberops = true; // Auto-unlock Level 2 in Main Hub!
-        }
-
         saveUser();
         initUI();
         if (gainedXP > 0) playSound('xpGain');
@@ -111,7 +144,7 @@
             currentCorrect: correctCount,
             totalQuestions,
             isNewHigh,
-            totalQuizEarnedXP: (currentUser.quizBestScores[quizId] || 0) * xpPerQuestion
+            totalQuizEarnedXP: Math.round((currentUser.quizBestScores[quizId] || 0) * xpPerQuestion)
         };
     }
 

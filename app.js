@@ -662,8 +662,12 @@
             const cyberopsPct = (typeof foundUser.progress === 'object' && foundUser.progress) ? (foundUser.progress.cyberops || 0) : 0;
             const cipherPct = (typeof foundUser.progress === 'object' && foundUser.progress) ? (foundUser.progress.cipher || 0) : 0;
 
+            const expLvl = foundUser.experienceLevel || 'beginner';
+            const isCyberopsUnlocked = (expLvl === 'intermediate' || expLvl === 'advanced' || (foundUser.xp || 0) >= 300 || academyPct >= 100);
+            const isCipherUnlocked = (expLvl === 'advanced' || (foundUser.xp || 0) >= 600 || cyberopsPct >= 100);
+
             currentUser = {
-                ...DEFAULT_USER,
+                ...JSON.parse(JSON.stringify(DEFAULT_USER)),
                 isLoggedIn: true,
                 isRegistered: true,
                 username: foundUser.username,
@@ -674,9 +678,9 @@
                 xp: foundUser.xp || 0,
                 rank: foundUser.rank || 'Cyber Trainee',
                 level: Math.floor((foundUser.xp || 0) / 50) + 1,
-                experienceLevel: foundUser.experienceLevel || 'beginner',
+                experienceLevel: expLvl,
                 progress: { academy: academyPct, cyberops: cyberopsPct, cipher: cipherPct },
-                unlocked: foundUser.unlocked || { academy: true, cyberops: (foundUser.xp >= 300), cipher: (foundUser.xp >= 600) },
+                unlocked: { academy: true, cyberops: isCyberopsUnlocked, cipher: isCipherUnlocked },
                 completedAcademyModules: foundUser.completedAcademyModules || [],
                 completedCyberOpsModules: foundUser.completedCyberOpsModules || [],
                 completedCipherModules: foundUser.completedCipherModules || [],
