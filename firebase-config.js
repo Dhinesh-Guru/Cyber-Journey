@@ -3,12 +3,13 @@
    ========================================================================== */
 
 const FIREBASE_CONFIG = {
-    apiKey: "YOUR_FIREBASE_API_KEY",
-    authDomain: "cyber-journey-demo.firebaseapp.com",
-    projectId: "cyber-journey-demo",
-    storageBucket: "cyber-journey-demo.appspot.com",
-    messagingSenderId: "123456789",
-    appId: "1:123456789:web:abcdef123456"
+    apiKey: "AIzaSyA_kcMuO9aqqSTLVNIX5O76YTYyxJOwG3k",
+    authDomain: "cyber-journey-98b66.firebaseapp.com",
+    projectId: "cyber-journey-98b66",
+    storageBucket: "cyber-journey-98b66.firebasestorage.app",
+    messagingSenderId: "215318770019",
+    appId: "1:215318770019:web:5add4b4e455cfce066a356",
+    measurementId: "G-JGWF0KF8BK"
 };
 
 // --- Firebase Cloud Bridge Service ---
