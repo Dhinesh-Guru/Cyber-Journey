@@ -231,12 +231,22 @@
         const container = document.getElementById('chapters-grid-container');
         if (!container) return;
 
-        // Check if Intermediate or Advanced clearance pre-unlocks all chapters
-        const isPreunlocked = (currentUser.experienceLevel === 'intermediate' || currentUser.experienceLevel === 'advanced');
+        const mainChapterCount = Array.from(completedChapters).filter(id => id !== 'final_exam').length;
+        const isAllCompleted = mainChapterCount >= 5;
 
-        container.innerHTML = ACADEMY_LESSONS.map((ch, idx) => {
+        const completionBannerHtml = isAllCompleted ? `
+            <div class="cyber-completion-banner" style="background:rgba(0,255,136,0.08); border:1px solid rgba(0,255,136,0.4); border-radius:12px; padding:16px 20px; margin-bottom:24px; display:flex; align-items:center; gap:16px; width:100%; grid-column:1 / -1;">
+                <div style="font-size:32px; color:#00ff88;"><i class="fa-solid fa-circle-check"></i></div>
+                <div>
+                    <h4 style="color:#00ff88; font-family:'Orbitron',sans-serif; font-size:1.05rem; margin-bottom:4px;">🎉 ALL ACADEMY MODULES COMPLETED!</h4>
+                    <p style="color:#e5e7eb; font-size:0.9rem; margin:0; line-height:1.5;">Outstanding work! You've mastered all security fundamentals. Ready for extra XP and hands-on practice? Explore the <strong>Mini-Games Arena</strong> to battle security quizzes or launch the <strong>CyberOS Virtual Laptop</strong> to interact with simulated security tools!</p>
+                </div>
+            </div>
+        ` : '';
+
+        const cardsHtml = ACADEMY_LESSONS.map((ch, idx) => {
             const isCompleted = completedChapters.has(ch.id);
-            const isUnlocked = isPreunlocked || idx === 0 || completedChapters.has(ACADEMY_LESSONS[idx - 1]?.id);
+            const isUnlocked = idx === 0 || completedChapters.has(ACADEMY_LESSONS[idx - 1]?.id);
 
             return `
                 <div class="chapter-card ${isUnlocked ? '' : 'locked'}">
@@ -255,6 +265,8 @@
                 </div>
             `;
         }).join('');
+
+        container.innerHTML = completionBannerHtml + cardsHtml;
 
         container.querySelectorAll('.btn-start-chapter').forEach(btn => {
             btn.addEventListener('click', (e) => {
