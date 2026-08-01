@@ -88,6 +88,17 @@ CyberJourney/
 
 ---
 
+## 🛡️ Self-Defensive Security Architecture & Attack Prevention Engine
+
+CyberJourney actively practices what it teaches! The application incorporates a real-time defensive security engine (`security-defense.js`) that protects the application against the very attacks demonstrated in its learning modules:
+
+1. **Anti-DoS & Rate Limiter (`checkRateLimit`)**: Limits form submissions and authentication attempts (max 5 requests per 15s) and triggers HTTP 429 protection banners during brute-force attempts.
+2. **XSS & Output Encoding Guard (`sanitizeHTML`)**: Context-aware HTML entity escaping prevents Cross-Site Scripting (XSS) payload injection into the DOM.
+3. **SQL Injection Disarmer (`sanitizeSQLInput`)**: Sanitizes and parameterizes form text to disarm raw SQL injection payloads (`' OR '1'='1`).
+4. **Active Defense & Mitigation Cards**: Every interactive workstation app and learning module embeds live prevention cards detailing exact mitigation strategies (SPF/DKIM/DMARC for Phishing, Prepared Statements for SQLi, TLS/HSTS for Cleartext traffic, AES-256 for Cryptography).
+
+---
+
 ## 🔒 Security & Access Control Features
 
 - **Direct Link Bypass Protection**: Direct URLs (`/CyberOps Lab/index.html` or `/Cipher Escape/index.html`) verify player progression state (`cyberjourney_user_v1` in `localStorage`) and display a **`🔒 ACCESS DENIED`** lock screen if preceding levels are incomplete.

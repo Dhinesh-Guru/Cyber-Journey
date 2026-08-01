@@ -123,17 +123,28 @@ const SOCWorkstationEngine = (function () {
         attachRowClickHandlers();
 
         container.querySelector('#btn-submit-log-challenge').onclick = () => {
-            const enteredIp = ipInput.value.trim();
             feedback.style.display = 'block';
+            if (typeof CyberDefenseEngine !== 'undefined') {
+                const rateCheck = CyberDefenseEngine.checkRateLimit('log_challenge_submit', 5, 15000);
+                if (!rateCheck.allowed) {
+                    feedback.className = 'soc-feedback-box danger';
+                    feedback.innerHTML = `<h4 class="text-danger"><i class="fa-solid fa-ban"></i> SECURITY DEFENSE: RATE LIMIT ACTIVE</h4><p>${rateCheck.error}</p>`;
+                    return;
+                }
+            }
+
+            const enteredIp = ipInput.value.trim();
 
             const isRowCorrect = (selectedLogRowId === 105);
             const isIpCorrect = (enteredIp === '45.142.120.9');
 
             if (isRowCorrect && isIpCorrect) {
                 feedback.className = 'soc-feedback-box success';
+                const preventionHtml = typeof CyberDefenseEngine !== 'undefined' ? CyberDefenseEngine.renderPreventionCardHtml('brute_force') : '';
                 feedback.innerHTML = `
                     <h4 class="text-cyan"><i class="fa-solid fa-circle-check"></i> ANOMALY DETECTED & CONTAINED!</h4>
                     <p>Outstanding log analysis! You correctly selected Log Entry #105 and identified attacker IP <code>45.142.120.9</code>. 15 failed logins in 10s confirmed the automated dictionary attack.</p>
+                    ${preventionHtml}
                 `;
                 if (window.CyberOpsApp) window.CyberOpsApp.awardXP(50, 'tool_log_investigation', 'log_master');
             } else {
@@ -361,9 +372,11 @@ const SOCWorkstationEngine = (function () {
 
             if (isPacketCorrect && isHazardCorrect && isIpCorrect) {
                 feedback.className = 'soc-feedback-box success';
+                const preventionHtml = typeof CyberDefenseEngine !== 'undefined' ? CyberDefenseEngine.renderPreventionCardHtml('cleartext_http') : '';
                 feedback.innerHTML = `
                     <h4 class="text-cyan"><i class="fa-solid fa-circle-check"></i> CLEARTEXT CREDENTIAL LEAK DETECTED!</h4>
                     <p>Outstanding analysis! You selected Packet #2, identified why HTTP Port 80 cleartext transmission exposes credentials (<code>uname=admin&pass=T!ger#92</code>), and correctly identified Source IP <code>192.168.1.14</code>.</p>
+                    ${preventionHtml}
                 `;
                 if (window.CyberOpsApp) window.CyberOpsApp.awardXP(50, 'tool_pcap_investigation', 'packet_master');
             } else {
