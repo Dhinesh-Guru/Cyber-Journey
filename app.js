@@ -109,25 +109,24 @@
         const isCyberopsUnlocked = (expLvl === 'intermediate' || expLvl === 'advanced' || (cloudData.xp || 0) >= 300 || academyPct >= 100);
         const isCipherUnlocked = (expLvl === 'advanced' || (cloudData.xp || 0) >= 600 || cyberopsPct >= 100);
 
-        currentUser.xp = Math.max(currentUser.xp || 0, cloudData.xp || 0);
-        currentUser.level = Math.max(currentUser.level || 1, Math.floor(currentUser.xp / 50) + 1);
+        currentUser.xp = typeof cloudData.xp === 'number' ? cloudData.xp : 0;
+        currentUser.level = Math.floor(currentUser.xp / 50) + 1;
         currentUser.rank = cloudData.rank || calculateRank(currentUser.xp).name;
-        currentUser.progress = {
-            academy: Math.max(currentUser.progress.academy || 0, academyPct),
-            cyberops: Math.max(currentUser.progress.cyberops || 0, cyberopsPct),
-            cipher: Math.max(currentUser.progress.cipher || 0, cipherPct)
-        };
+        currentUser.progress = { academy: academyPct, cyberops: cyberopsPct, cipher: cipherPct };
         currentUser.unlocked = {
             academy: true,
             cyberops: isCyberopsUnlocked || currentUser.unlocked.cyberops,
             cipher: isCipherUnlocked || currentUser.unlocked.cipher
         };
 
-        currentUser.completedAcademyModules = Array.from(new Set([...(currentUser.completedAcademyModules || []), ...(cloudData.completedAcademyModules || [])]));
-        currentUser.completedCyberOpsModules = Array.from(new Set([...(currentUser.completedCyberOpsModules || []), ...(cloudData.completedCyberOpsModules || [])]));
-        currentUser.completedCipherModules = Array.from(new Set([...(currentUser.completedCipherModules || []), ...(cloudData.completedCipherModules || [])]));
-        currentUser.quizBestScores = { ...(currentUser.quizBestScores || {}), ...(cloudData.quizBestScores || {}) };
+        currentUser.completedAcademyModules = cloudData.completedAcademyModules || [];
+        currentUser.completedCyberOpsModules = cloudData.completedCyberOpsModules || [];
+        currentUser.completedCipherModules = cloudData.completedCipherModules || [];
+        currentUser.quizBestScores = cloudData.quizBestScores || {};
 
+        if (currentUser.isLoggedIn && currentUser.isRegistered) {
+            saveRegisteredUser(currentUser);
+        }
         localStorage.setItem(STORAGE_KEY_USER, JSON.stringify(currentUser));
         updateUI();
     }
@@ -354,6 +353,9 @@
         localStorage.setItem(STORAGE_KEY_USER, JSON.stringify(currentUser));
         if (currentUser.isLoggedIn && currentUser.isRegistered) {
             saveRegisteredUser(currentUser);
+            if (typeof FirebaseSyncService !== 'undefined' && FirebaseSyncService.isCloudActive()) {
+                FirebaseSyncService.syncProgressToCloud(currentUser);
+            }
         }
         updateUI();
     }
