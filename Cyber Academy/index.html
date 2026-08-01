@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cyber Academy | Level 1 Cybersecurity Training</title>
+    <!-- Modern Cyberpunk & Educational Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Orbitron:wght@600;700;800&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Cyber Academy Custom Styles -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Header & Platform Navigation -->
+    <header class="academy-header">
+        <div class="brand-section">
+            <div class="academy-logo-icon">
+                <i class="fa-solid fa-graduation-cap"></i>
+            </div>
+            <div class="brand-titles">
+                <h1>CYBER ACADEMY</h1>
+                <span>LEVEL 01 • BEGINNER CYBERSECURITY TRAINING</span>
+            </div>
+        </div>
+
+        <div class="user-widget-pill">
+            <div class="user-avatar-circle" id="user-display-avatar">T</div>
+            <div class="user-info-text">
+                <span class="user-name-str" id="user-display-name">Trainee</span>
+                <span class="user-rank-str" id="user-display-rank">Cyber Trainee</span>
+            </div>
+            <span class="badge-tag highlight" id="user-display-xp">0 XP</span>
+        </div>
+
+        <a href="../index.html" class="btn-return-hub">
+            <i class="fa-solid fa-arrow-left"></i> RETURN TO MAIN HUB
+        </a>
+    </header>
+
+    <!-- Section Navigation Bar -->
+    <nav class="academy-nav-bar">
+        <button class="nav-tab-btn active" data-view="modules">
+            <i class="fa-solid fa-book-open"></i> ACADEMY MODULES
+        </button>
+        <button class="nav-tab-btn" data-view="minigames">
+            <i class="fa-solid fa-gamepad"></i> MINI-GAMES ARENA
+        </button>
+        <button class="nav-tab-btn" data-view="cyberos">
+            <i class="fa-solid fa-laptop-code"></i> CYBEROS VIRTUAL LAPTOP
+        </button>
+    </nav>
+
+    <!-- Main Application Views -->
+    <main class="academy-container">
+
+        <!-- View 1: Academy Modules (Chapters & Quizzes) -->
+        <section class="academy-view active" id="view-modules">
+            <div class="section-intro">
+                <h2><i class="fa-solid fa-graduation-cap text-emerald"></i> Learning Chapters & Security Quizzes</h2>
+                <p style="color:var(--text-secondary); margin-top:6px;">Complete lessons, answer multiple-choice quizzes, and earn badges to master cybersecurity basics.</p>
+            </div>
+            <div class="chapters-grid" id="chapters-grid-container">
+                <!-- Rendered dynamically by app.js -->
+            </div>
+        </section>
+
+        <!-- View 2: Mini-Games Arena -->
+        <section class="academy-view" id="view-minigames">
+            <div class="section-intro" style="display:flex; justify-content:space-between; align-items:center;">
+                <div>
+                    <h2><i class="fa-solid fa-gamepad text-emerald"></i> Mini-Games Security Arena</h2>
+                    <p style="color:var(--text-secondary); margin-top:6px;">Practice your skills through interactive challenges and rapid battles.</p>
+                </div>
+                <div class="game-picker-select">
+                    <label style="font-family:var(--font-sub); font-weight:700; margin-right:8px;">Select Challenge:</label>
+                    <select id="select-game-picker" class="cyber-secondary-btn">
+                        <option value="password">Game 1: Password Strength Builder</option>
+                        <option value="phishing">Game 2: Phishing Email Inspector</option>
+                        <option value="url">Game 3: Safe Website URL Guard</option>
+                        <option value="malware">Game 4: Malware File Hunter</option>
+                        <option value="battle">Game 5: Security Quiz Battle (Timer Mode)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div id="mini-game-stage">
+                <!-- Loaded dynamically by minigames.js -->
+            </div>
+        </section>
+
+        <!-- View 3: CyberOS Virtual Laptop Simulator -->
+        <section class="academy-view" id="view-cyberos">
+            <div class="section-intro" style="margin-bottom:16px;">
+                <h2><i class="fa-solid fa-laptop-code text-emerald"></i> Virtual Laptop Simulator ("CyberOS Academy Edition")</h2>
+                <p style="color:var(--text-secondary);">Double-click app icons to launch interactive cybersecurity tools, inspect simulated emails, toggle firewall settings, and run terminal commands.</p>
+            </div>
+
+            <div id="cyberos-stage-container">
+                <!-- Loaded dynamically by cyberos.js -->
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Data Scripts -->
+    <script src="data/lessons.js?v=6"></script>
+    <script src="data/phishing_data.js?v=6"></script>
+    <script src="data/malware_data.js?v=6"></script>
+
+    <!-- Component Scripts -->
+    <script src="components/minigames.js?v=6"></script>
+    <script src="components/cyberos.js?v=6"></script>
+
+    <!-- Core App Controller & Bridge -->
+    <script src="app.js?v=6"></script>
+</body>
+</html>

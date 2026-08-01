@@ -1,0 +1,768 @@
+==========================================================
+              CyberSphere ROADMAP
+==========================================================
+
+Project Name:
+CyberJourney  (If anywhere in this file mentions CyberVerse then change it into "CyberJourney" this is the project name)
+
+Tagline:
+A Progressive Cybersecurity Learning Platform
+
+
+==========================================================
+1. PROJECT VISION
+==========================================================
+
+Cyberjourney is a cybersecurity learning platform that teaches
+users from beginner level to advanced level through
+interactive games, simulations, and challenges.
+
+The platform is divided into three connected experiences:
+
+1. Cyber Academy
+2. CyberOps Lab
+3. Cipher Escape
+
+
+The user grows from a beginner learner into an advanced
+cybersecurity problem solver.
+
+
+==========================================================
+2. LEARNING PATH
+==========================================================
+
+
+LEVEL 1
+
+Cyber Academy
+
+Difficulty:
+Beginner
+
+
+Goal:
+
+Teach basic cybersecurity awareness.
+
+
+User learns:
+
+- Password security
+- Phishing detection
+- Safe browsing
+- Malware awareness
+- Device security
+- Basic networking
+
+
+
+        ↓
+
+
+
+LEVEL 2
+
+CyberOps Lab
+
+Difficulty:
+Intermediate
+
+
+Goal:
+
+Teach how cybersecurity professionals investigate threats.
+
+
+User learns:
+
+- Security logs
+- Network analysis
+- Malware investigation
+- Digital forensics
+- Incident response
+- Security tools
+
+
+
+        ↓
+
+
+
+LEVEL 3
+
+Cipher Escape
+
+Difficulty:
+Advanced
+
+
+Goal:
+
+Challenge users with advanced cybersecurity puzzles.
+
+
+User learns:
+
+- Cryptography
+- Encoding
+- Encryption concepts
+- Cipher solving
+- Security problem solving
+
+
+
+==========================================================
+3. PLATFORM STRUCTURE
+==========================================================
+
+
+CyberVerse
+
+|
+
+|---- Cyber Academy
+
+|       Beginner Training
+
+|
+
+|---- CyberOps Lab
+
+|       Security Analyst Training
+
+|
+
+|---- Cipher Escape
+
+        Advanced Cyber Challenges
+
+
+
+==========================================================
+4. USER JOURNEY
+==========================================================
+
+
+New User
+
+↓
+
+Create Account
+
+↓
+
+Start Cyber Academy
+
+↓
+
+Complete Beginner Missions
+
+↓
+
+Unlock CyberOps Lab
+
+↓
+
+Complete Analyst Training
+
+↓
+
+Unlock Cipher Escape
+
+↓
+
+Complete Advanced Challenges
+
+↓
+
+Become Cyber Defender
+
+
+
+==========================================================
+5. SHARED PLATFORM FEATURES
+==========================================================
+
+
+All three projects share:
+
+
+USER ACCOUNT
+
+Stores:
+
+- Username
+- Profile
+- Progress
+- XP
+- Level
+- Achievements
+
+
+==========================================================
+
+
+PROFILE SYSTEM
+
+
+Shows:
+
+
+Player Rank
+
+XP
+
+Completed Missions
+
+Badges
+
+Statistics
+
+
+
+==========================================================
+
+
+XP SYSTEM
+
+
+Players earn XP from:
+
+
+Completing missions
+
+Solving puzzles
+
+Passing quizzes
+
+Daily challenges
+
+
+
+==========================================================
+
+
+RANK SYSTEM
+
+
+Example:
+
+
+Level 1:
+
+Cyber Trainee
+
+
+Level 5:
+
+Security Student
+
+
+Level 10:
+
+Security Analyst
+
+
+Level 20:
+
+Cyber Defender
+
+
+
+==========================================================
+
+
+ACHIEVEMENT SYSTEM
+
+
+Examples:
+
+
+First Mission
+
+
+Password Guardian
+
+
+Phishing Detective
+
+
+Threat Hunter
+
+
+Cipher Master
+
+
+Cyber Defender
+
+
+
+==========================================================
+
+
+LEADERBOARD
+
+
+Shows:
+
+
+Top Players
+
+Highest XP
+
+Fastest Completion
+
+Best Scores
+
+
+
+==========================================================
+6. PROJECT CONNECTION SYSTEM
+==========================================================
+
+
+Unlock System:
+
+
+Cyber Academy Completion
+
+↓
+
+Unlock CyberOps Lab
+
+
+CyberOps Lab Completion
+
+↓
+
+Unlock Cipher Escape
+
+
+
+Example:
+
+
+Cyber Academy Progress:
+
+100%
+
+Status:
+
+Completed
+
+
+CyberOps Lab:
+
+Unlocked
+
+
+
+==========================================================
+7. DATABASE DESIGN
+==========================================================
+
+
+Shared Database:
+
+
+USERS TABLE
+
+
+Contains:
+
+id
+
+username
+
+email
+
+password
+
+level
+
+xp
+
+rank
+
+
+
+--------------------------
+
+
+PROGRESS TABLE
+
+
+Contains:
+
+
+user_id
+
+project_name
+
+completed_levels
+
+score
+
+completion_percentage
+
+
+
+--------------------------
+
+
+ACHIEVEMENTS TABLE
+
+
+Contains:
+
+
+achievement_id
+
+name
+
+description
+
+
+
+--------------------------
+
+
+USER ACHIEVEMENTS TABLE
+
+
+Contains:
+
+
+user_id
+
+achievement_id
+
+date_unlocked
+
+
+
+--------------------------
+
+
+MISSIONS TABLE
+
+
+Contains:
+
+
+mission_id
+
+project
+
+title
+
+difficulty
+
+reward
+
+
+
+--------------------------
+
+
+SCORES TABLE
+
+
+Contains:
+
+
+user_id
+
+score
+
+project
+
+date
+
+
+
+==========================================================
+8. TECHNICAL ARCHITECTURE
+==========================================================
+
+
+Frontend:
+
+React
+
+TypeScript
+
+Tailwind CSS
+
+
+
+Backend:
+
+Node.js / Express
+
+or
+
+Python FastAPI
+
+
+
+Database:
+
+PostgreSQL
+
+
+
+Authentication:
+
+Firebase Auth
+
+or
+
+Clerk
+
+
+
+==========================================================
+9. DEVELOPMENT STRATEGY
+==========================================================
+
+
+IMPORTANT:
+
+Do not build everything together.
+
+Build each project separately.
+
+Connect them later.
+
+
+
+==========================================================
+PHASE 1
+CYBER ACADEMY
+==========================================================
+
+
+Build:
+
+- Authentication
+- User profile
+- Quiz system
+- Mini games
+- Virtual Laptop Simulator
+- XP system
+
+
+Goal:
+
+Create beginner cybersecurity experience.
+
+
+
+==========================================================
+PHASE 2
+CYBEROPS LAB
+==========================================================
+
+
+Reuse:
+
+- User system
+- XP
+- Achievements
+
+
+Add:
+
+
+- Log investigation
+- Network analysis
+- Malware analysis
+- Security tools
+- Incident response
+
+
+
+Goal:
+
+Create security analyst simulator.
+
+
+
+==========================================================
+PHASE 3
+CIPHER ESCAPE
+==========================================================
+
+
+Reuse:
+
+
+- User system
+- Progress system
+- Achievements
+
+
+Add:
+
+
+- Cipher puzzles
+- Encryption challenges
+- Escape rooms
+- Advanced missions
+
+
+
+Goal:
+
+Create advanced cybersecurity puzzle game.
+
+
+
+==========================================================
+10. FUTURE PLATFORM FEATURES
+==========================================================
+
+
+After all three projects are complete:
+
+
+GLOBAL DASHBOARD
+
+
+Shows:
+
+
+Cybersecurity journey
+
+Completed levels
+
+Skills learned
+
+Achievements
+
+
+
+--------------------------
+
+
+CERTIFICATE SYSTEM
+
+
+Users receive:
+
+
+Cyber Academy Certificate
+
+Security Analyst Certificate
+
+Cyber Defender Certificate
+
+
+
+--------------------------
+
+
+COMMUNITY FEATURES
+
+
+Add:
+
+
+User profiles
+
+Friends
+
+Challenge sharing
+
+Custom puzzles
+
+
+
+--------------------------
+
+
+AI FEATURES
+
+
+Possible future additions:
+
+
+AI cybersecurity mentor
+
+AI generated missions
+
+AI hints
+
+Adaptive difficulty
+
+
+
+==========================================================
+11. PROJECT DEVELOPMENT RULES
+==========================================================
+
+
+Rule 1:
+
+Finish one project before starting another.
+
+
+Rule 2:
+
+Make every project playable before adding advanced features.
+
+
+Rule 3:
+
+Reuse common systems between projects.
+
+
+Rule 4:
+
+Keep beginner users and advanced users separate.
+
+
+Rule 5:
+
+Focus on learning experience, not only features.
+
+
+
+==========================================================
+12. FINAL PRODUCT VISION
+==========================================================
+
+
+CyberVerse should become a complete cybersecurity learning
+journey.
+
+
+A user should be able to start with zero knowledge and
+progress through:
+
+
+Beginner
+
+"I know how to protect myself."
+
+
+↓
+
+Intermediate
+
+"I can investigate security problems."
+
+
+↓
+
+Advanced
+
+"I can solve complex cybersecurity challenges."
+
+
+
+==========================================================
+END OF CyberSphere ROADMAP
+==========================================================

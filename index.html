@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberJourney | Progressive Cybersecurity Learning Platform</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@500;700;800;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="cyber-theme">
+    <!-- Background Canvas for Interactive Matrix Grid -->
+    <canvas id="bg-canvas"></canvas>
+
+    <!-- Overlay Audio Controls & Ambient Glow -->
+    <div class="ambient-glow"></div>
+
+    <!-- Main Navigation Header -->
+    <header class="cyber-header">
+        <div class="header-container">
+            <div class="brand-logo" id="brand-home">
+                <div class="logo-shield">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    <span class="logo-pulse"></span>
+                </div>
+                <div class="logo-text">
+                    <span class="brand-title">CYBER<span class="highlight">JOURNEY</span></span>
+                    <span class="brand-sub">DEFENSE PLATFORM</span>
+                </div>
+            </div>
+
+            <nav class="nav-links">
+                <button class="nav-btn active" id="nav-hub-btn"><i class="fa-solid fa-cubes"></i> Command Hub</button>
+                <button class="nav-btn" id="nav-leaderboard-btn"><i class="fa-solid fa-trophy"></i> Leaderboard</button>
+                <button class="nav-btn" id="nav-roadmap-btn"><i class="fa-solid fa-map-location-dot"></i> Roadmap</button>
+            </nav>
+
+            <div class="header-actions">
+                <!-- Sound Toggle -->
+                <button class="icon-btn" id="sound-toggle-btn" title="Toggle Sound FX">
+                    <i class="fa-solid fa-volume-high" id="sound-icon"></i>
+                </button>
+
+                <!-- User Profile & Auth Widget -->
+                <div id="user-widget" class="user-widget">
+                    <!-- Dynamic rendering by app.js (Logged in vs Guest) -->
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="main-layout">
+        <!-- Hero Section -->
+        <section class="hero-banner">
+            <div class="hero-badge"><i class="fa-solid fa-terminal"></i> SYSTEM ONLINE • V2.5 SECURE</div>
+            <h1 class="hero-title">MASTER THE ART OF <span class="gradient-text">CYBER DEFENSE</span></h1>
+            <p class="hero-description">
+                From basic security awareness to advanced cryptographic vault escapes — level up your skills through hands-on interactive cybersecurity challenges.
+            </p>
+
+            <!-- Quick Player Stat Bar -->
+            <div class="player-quick-stats" id="player-stat-bar">
+                <div class="stat-card">
+                    <span class="stat-label">CURRENT RANK</span>
+                    <span class="stat-value rank-text" id="stat-rank">Cyber Trainee</span>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat-card">
+                    <span class="stat-label">TOTAL XP</span>
+                    <span class="stat-value xp-text" id="stat-xp">0 XP</span>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat-card">
+                    <span class="stat-label">PATH PROGRESS</span>
+                    <span class="stat-value level-text" id="stat-progress">0% Completed</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Mode Selection Matrix Section -->
+        <section class="modes-section">
+            <div class="section-header">
+                <h2 class="section-title"><i class="fa-solid fa-network-wired"></i> SELECT MISSION SECTOR</h2>
+                <p class="section-subtitle">Choose your current clearance level to launch into training</p>
+            </div>
+
+            <div class="modes-grid">
+                <!-- Mode 1: Cyber Academy (Beginner) -->
+                <article class="mode-card academy-card" data-mode="academy">
+                    <div class="card-glass-header">
+                        <span class="badge-level beginner-badge">LEVEL 01 • BEGINNER</span>
+                        <div class="status-indicator unlocked"><i class="fa-solid fa-lock-open"></i> AVAILABLE</div>
+                    </div>
+                    <div class="mode-icon-wrapper">
+                        <div class="icon-ring"></div>
+                        <i class="fa-solid fa-graduation-cap mode-main-icon"></i>
+                    </div>
+                    <div class="mode-body">
+                        <h3 class="mode-title">Cyber Academy</h3>
+                        <p class="mode-tagline">Security Fundamentals & Awareness</p>
+                        <p class="mode-desc">
+                            Build your foundational knowledge in password hygiene, phishing detection, malware defense, and safe web browsing techniques.
+                        </p>
+
+                        <div class="skills-chips">
+                            <span><i class="fa-solid fa-key"></i> Passwords</span>
+                            <span><i class="fa-solid fa-fish"></i> Phishing</span>
+                            <span><i class="fa-solid fa-globe"></i> Safe Browsing</span>
+                            <span><i class="fa-solid fa-bug"></i> Malware</span>
+                        </div>
+
+                        <div class="mode-progress-wrapper">
+                            <div class="progress-info">
+                                <span>Completion</span>
+                                <span id="academy-progress-percent">0%</span>
+                            </div>
+                            <div class="progress-bar-bg">
+                                <div class="progress-bar-fill academy-fill" id="academy-progress-bar" style="width: 0%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <button class="launch-btn academy-btn" id="launch-academy-btn">
+                            <span>LAUNCH ACADEMY</span>
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </article>
+
+                <!-- Mode 2: CyberOps Lab (Intermediate) -->
+                <article class="mode-card cyberops-card locked" id="mode-cyberops-card" data-mode="cyberops">
+                    <div class="card-glass-header">
+                        <span class="badge-level intermediate-badge">LEVEL 02 • INTERMEDIATE</span>
+                        <div class="status-indicator" id="cyberops-status">
+                            <i class="fa-solid fa-lock"></i> LOCKED
+                        </div>
+                    </div>
+                    <div class="mode-icon-wrapper">
+                        <div class="icon-ring"></div>
+                        <i class="fa-solid fa-user-ninja mode-main-icon"></i>
+                    </div>
+                    <div class="mode-body">
+                        <h3 class="mode-title">CyberOps Lab</h3>
+                        <p class="mode-tagline">SOC Security Analyst Training</p>
+                        <p class="mode-desc">
+                            Step into the shoes of a security analyst. Investigate raw threat logs, analyze network traffic PCAPs, and lead incident response.
+                        </p>
+
+                        <div class="skills-chips">
+                            <span><i class="fa-solid fa-list-check"></i> Security Logs</span>
+                            <span><i class="fa-solid fa-diagram-project"></i> Network</span>
+                            <span><i class="fa-solid fa-magnifying-glass"></i> Forensics</span>
+                        </div>
+
+                        <div class="mode-progress-wrapper">
+                            <div class="progress-info">
+                                <span>Completion</span>
+                                <span id="cyberops-progress-percent">0%</span>
+                            </div>
+                            <div class="progress-bar-bg">
+                                <div class="progress-bar-fill cyberops-fill" id="cyberops-progress-bar" style="width: 0%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <button class="launch-btn cyberops-btn" id="launch-cyberops-btn">
+                            <span id="cyberops-btn-text">REQUIRES ACADEMY</span>
+                            <i class="fa-solid fa-lock" id="cyberops-btn-icon"></i>
+                        </button>
+                    </div>
+                </article>
+
+                <!-- Mode 3: Cipher Escape (Advanced) -->
+                <article class="mode-card cipher-card locked" id="mode-cipher-card" data-mode="cipher">
+                    <div class="card-glass-header">
+                        <span class="badge-level advanced-badge">LEVEL 03 • ADVANCED</span>
+                        <div class="status-indicator" id="cipher-status">
+                            <i class="fa-solid fa-lock"></i> LOCKED
+                        </div>
+                    </div>
+                    <div class="mode-icon-wrapper">
+                        <div class="icon-ring"></div>
+                        <i class="fa-solid fa-user-secret mode-main-icon"></i>
+                    </div>
+                    <div class="mode-body">
+                        <h3 class="mode-title">Cipher Escape</h3>
+                        <p class="mode-tagline">Cryptographic Vault Challenges</p>
+                        <p class="mode-desc">
+                            Crack high-level ciphers, decrypt encrypted messages, analyze hash digests, and escape complex cryptographic rooms.
+                        </p>
+
+                        <div class="skills-chips">
+                            <span><i class="fa-solid fa-lock"></i> Cryptography</span>
+                            <span><i class="fa-solid fa-code"></i> Encoding</span>
+                            <span><i class="fa-solid fa-key"></i> RSA & AES</span>
+                        </div>
+
+                        <div class="mode-progress-wrapper">
+                            <div class="progress-info">
+                                <span>Completion</span>
+                                <span id="cipher-progress-percent">0%</span>
+                            </div>
+                            <div class="progress-bar-bg">
+                                <div class="progress-bar-fill cipher-fill" id="cipher-progress-bar" style="width: 0%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <button class="launch-btn cipher-btn" id="launch-cipher-btn">
+                            <span id="cipher-btn-text">REQUIRES CYBEROPS</span>
+                            <i class="fa-solid fa-lock" id="cipher-btn-icon"></i>
+                        </button>
+                    </div>
+                </article>
+            </div>
+        </section>
+    </main>
+
+    <!-- Modal: Auth (Sign In / Sign Up / Forgot Password) -->
+    <div class="modal-overlay" id="auth-modal">
+        <div class="modal-container auth-modal-box">
+            <button class="modal-close-btn" class="close-modal">&times;</button>
+            
+            <div class="auth-tabs" id="auth-tabs-bar">
+                <button class="auth-tab-btn active" id="tab-login-btn">Sign In</button>
+                <button class="auth-tab-btn" id="tab-signup-btn">Create Account</button>
+            </div>
+
+            <!-- Sign In Form -->
+            <form id="login-form" class="auth-form active">
+                <h3 class="form-title">Sign In to CyberJourney</h3>
+                <p class="form-subtitle">Enter your credentials to resume your journey</p>
+                
+                <div class="form-group">
+                    <label><i class="fa-solid fa-user"></i> Username or Email</label>
+                    <input type="text" id="login-username" placeholder="Username or email..." required autocomplete="off">
+                </div>
+
+                <div class="form-group">
+                    <div class="label-with-link">
+                        <label><i class="fa-solid fa-key"></i> Password</label>
+                        <a href="#" id="link-forgot-password" class="auth-link-sm">Forgot Password?</a>
+                    </div>
+                    <input type="password" id="login-password" placeholder="••••••••" required autocomplete="off">
+                </div>
+
+                <button type="submit" class="cyber-primary-btn full-width">SIGN IN</button>
+                
+                <div class="auth-switch-prompt">
+                    <span>Don't have an account?</span>
+                    <a href="#" id="switch-to-signup" class="auth-link-highlight">Register Account</a>
+                </div>
+
+                <div class="form-divider"><span>OR</span></div>
+                <button type="button" class="cyber-secondary-btn full-width guest-trigger-btn">
+                    <i class="fa-solid fa-user-secret"></i> Continue as Guest
+                </button>
+            </form>
+
+            <!-- Sign Up Form -->
+            <form id="signup-form" class="auth-form">
+                <h3 class="form-title">Create Account</h3>
+                <p class="form-subtitle">Start your path from Trainee to Cyber Defender</p>
+                
+                <div class="form-group">
+                    <label><i class="fa-solid fa-user"></i> Username</label>
+                    <input type="text" id="signup-username" placeholder="Choose username..." required autocomplete="off">
+                    <div class="username-suggestions-box" id="signup-suggestions-box" style="display: none;">
+                        <span class="suggestion-lbl"><i class="fa-solid fa-circle-exclamation text-amber"></i> Username taken. Try one of these:</span>
+                        <div class="suggestions-chips" id="signup-suggestions-chips"></div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fa-solid fa-envelope"></i> Email Address</label>
+                    <input type="email" id="signup-email" placeholder="user@domain.com" required autocomplete="off">
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fa-solid fa-key"></i> Password</label>
+                    <input type="password" id="signup-password" placeholder="Min 6 characters..." required autocomplete="off">
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fa-solid fa-sliders"></i> Select Your Starting Clearance</label>
+                    <div class="experience-selector">
+                        <label class="exp-option selected">
+                            <input type="radio" name="signup-exp" value="beginner" checked>
+                            <div class="exp-content">
+                                <span class="exp-title"><i class="fa-solid fa-graduation-cap text-emerald"></i> Beginner</span>
+                                <span class="exp-desc">Start at Cyber Academy (Recommended for newcomers)</span>
+                            </div>
+                        </label>
+                        <label class="exp-option">
+                            <input type="radio" name="signup-exp" value="intermediate">
+                            <div class="exp-content">
+                                <span class="exp-title"><i class="fa-solid fa-user-ninja text-cyan"></i> Intermediate</span>
+                                <span class="exp-desc">Skip to CyberOps Lab (For IT/SOC background)</span>
+                            </div>
+                        </label>
+                        <label class="exp-option">
+                            <input type="radio" name="signup-exp" value="advanced">
+                            <div class="exp-content">
+                                <span class="exp-title"><i class="fa-solid fa-user-secret text-purple"></i> Advanced</span>
+                                <span class="exp-desc">Unlock All Sectors (Direct Cipher Escape access)</span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <button type="submit" class="cyber-primary-btn full-width">REGISTER ACCOUNT</button>
+                
+                <div class="auth-switch-prompt">
+                    <span>Already have an account?</span>
+                    <a href="#" id="switch-to-login" class="auth-link-highlight">Sign In Here</a>
+                </div>
+
+                <div class="form-divider"><span>OR</span></div>
+                <button type="button" class="cyber-secondary-btn full-width guest-trigger-btn">
+                    <i class="fa-solid fa-user-secret"></i> Continue as Guest
+                </button>
+            </form>
+
+            <!-- Forgot Password Form -->
+            <form id="forgot-form" class="auth-form">
+                <h3 class="form-title">Reset Password</h3>
+                <p class="form-subtitle">Enter your registered email to dispatch a password reset link to CMD</p>
+                
+                <div class="form-group">
+                    <label><i class="fa-solid fa-envelope"></i> Registered Email Address</label>
+                    <input type="email" id="forgot-email" placeholder="user@domain.com" required autocomplete="off">
+                </div>
+
+                <button type="submit" class="cyber-primary-btn full-width">SEND RESET LINK TO CMD</button>
+                
+                <div class="auth-switch-prompt" style="margin-top: 16px; display:flex; flex-direction:column; gap:8px; align-items:center;">
+                    <a href="#" id="link-have-token" class="auth-link-highlight"><i class="fa-solid fa-key"></i> Have a reset token key from CMD? Click here</a>
+                    <a href="#" id="forgot-back-to-login" class="auth-link-sm"><i class="fa-solid fa-arrow-left"></i> Back to Sign In</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Password Reset Token Submission Modal -->
+    <div class="modal-overlay" id="reset-link-modal">
+        <div class="modal-container alert-modal-box">
+            <button class="modal-close-btn">&times;</button>
+            <div class="alert-icon-wrap text-cyan">
+                <i class="fa-solid fa-terminal"></i>
+            </div>
+            <h3 class="alert-title">Enter Reset Token Key</h3>
+            <p class="alert-desc">
+                A password reset token was printed to the <strong>backend system console (CMD)</strong>. Retrieve your <code>RESET-KEY-XXXX</code> from CMD log and enter it below:
+            </p>
+            
+            <form id="direct-reset-form" style="margin-top: 14px;">
+                <div class="form-group" style="text-align: left;">
+                    <label><i class="fa-solid fa-ticket"></i> Reset Token Key (from CMD)</label>
+                    <input type="text" id="reset-token-input" placeholder="e.g. RESET-KEY-4295" required autocomplete="off">
+                </div>
+                <div class="form-group" style="text-align: left;">
+                    <label><i class="fa-solid fa-key"></i> New Password</label>
+                    <input type="password" id="reset-new-password" placeholder="New password (must not be old password)..." required>
+                </div>
+                <div class="form-group" style="text-align: left;">
+                    <label><i class="fa-solid fa-lock"></i> Confirm New Password</label>
+                    <input type="password" id="reset-confirm-password" placeholder="Confirm new password..." required>
+                </div>
+                <button type="submit" class="cyber-primary-btn full-width">VERIFY TOKEN & UPDATE PASSWORD</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Guest Warning Confirmation -->
+    <div class="modal-overlay" id="guest-warning-modal">
+        <div class="modal-container alert-modal-box">
+            <button class="modal-close-btn">&times;</button>
+            <div class="alert-icon-wrap text-amber">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <h3 class="alert-title">Guest Account Warning</h3>
+            <p class="alert-desc">
+                As a Guest, your progress is session-temporary and your scores <strong class="text-danger">WILL NOT be posted on the Global Leaderboard</strong>.
+            </p>
+            <p class="alert-subdesc">Create a registered account to save your achievements permanently and rank globally.</p>
+            
+            <div class="alert-actions-grid">
+                <button type="button" class="cyber-primary-btn" id="confirm-guest-btn">PROCEED AS GUEST</button>
+                <button type="button" class="cyber-secondary-btn" id="cancel-guest-btn">REGISTER ACCOUNT</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: User Profile & Badges -->
+    <div class="modal-overlay" id="profile-modal">
+        <div class="modal-container profile-modal-box">
+            <button class="modal-close-btn">&times;</button>
+            
+            <div class="profile-header">
+                <div class="profile-avatar-container" id="avatar-container">
+                    <div class="profile-avatar" id="profile-avatar-img">
+                        <i class="fa-solid fa-user-shield"></i>
+                    </div>
+                    <label class="avatar-edit-overlay" id="avatar-edit-label" title="Upload Profile Picture (Registered Users Only)">
+                        <i class="fa-solid fa-camera"></i>
+                        <input type="file" id="avatar-file-input" accept="image/*" style="display:none;">
+                    </label>
+                    <button type="button" class="avatar-remove-btn" id="avatar-remove-btn" title="Remove Profile Picture" style="display:none;">
+                        <i class="fa-solid fa-trash-can"></i>
+                    </button>
+                </div>
+                <div class="profile-identity">
+                    <h2 id="prof-username">User Profile</h2>
+                    <span class="rank-badge-pill" id="prof-rank">Cyber Trainee</span>
+                    <span id="prof-guest-notice" class="guest-notice-pill" style="display:none;"><i class="fa-solid fa-user-secret"></i> Guest Mode</span>
+                </div>
+            </div>
+
+            <div class="profile-content-grid">
+                <!-- Level & XP Breakdown -->
+                <div class="profile-card">
+                    <h4><i class="fa-solid fa-bolt"></i> Rank Progression</h4>
+                    <div class="xp-level-display">
+                        <div class="level-circle">
+                            <span id="prof-level-num">1</span>
+                            <span class="level-lbl">LEVEL</span>
+                        </div>
+                        <div class="xp-bar-container">
+                            <div class="xp-labels">
+                                <span>Current XP: <strong id="prof-xp-val">0</strong></span>
+                                <span>Next Rank: <strong id="prof-next-rank">Security Student (100 XP)</strong></span>
+                            </div>
+                            <div class="progress-bar-bg">
+                                <div class="progress-bar-fill xp-fill" id="prof-xp-bar" style="width: 0%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Username Change Card -->
+                <div class="profile-card">
+                    <h4><i class="fa-solid fa-user-pen"></i> Username Settings</h4>
+                    <form id="profile-username-form" class="inline-form">
+                        <div class="form-group" style="flex:1; margin-bottom:0;">
+                            <input type="text" id="prof-username-input" placeholder="New username..." required>
+                        </div>
+                        <button type="submit" class="cyber-secondary-btn">UPDATE USERNAME</button>
+                    </form>
+                    <div class="username-suggestions-box" id="prof-suggestions-box" style="display: none; margin-top: 10px;">
+                        <span class="suggestion-lbl"><i class="fa-solid fa-circle-exclamation text-amber"></i> Username taken. Suggestions:</span>
+                        <div class="suggestions-chips" id="prof-suggestions-chips"></div>
+                    </div>
+                </div>
+
+                <!-- Password Change Card -->
+                <div class="profile-card">
+                    <h4><i class="fa-solid fa-lock"></i> Security & Password Change</h4>
+                    <form id="profile-password-form">
+                        <div class="form-group">
+                            <label>Current Password</label>
+                            <input type="password" id="prof-curr-password" placeholder="••••••••" required>
+                        </div>
+                        <div class="form-group-row">
+                            <div class="form-group" style="flex:1;">
+                                <label>New Password</label>
+                                <input type="password" id="prof-new-password" placeholder="New password..." required>
+                            </div>
+                            <div class="form-group" style="flex:1;">
+                                <label>Confirm New Password</label>
+                                <input type="password" id="prof-confirm-password" placeholder="Confirm password..." required>
+                            </div>
+                        </div>
+                        <button type="submit" class="cyber-secondary-btn">CHANGE PASSWORD</button>
+                    </form>
+                </div>
+
+                <!-- Badges / Achievements -->
+                <div class="profile-card">
+                    <h4><i class="fa-solid fa-award"></i> Badges & Achievements</h4>
+                    <div class="badges-grid" id="badges-container">
+                        <!-- Rendered by JS -->
+                    </div>
+                </div>
+
+                <!-- Starting Clearance Setting -->
+                <div class="profile-card">
+                    <h4><i class="fa-solid fa-sliders"></i> Starting Clearance Level</h4>
+                    <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 12px;">Change your unlocked sectors based on your background:</p>
+                    <div class="clearance-btn-group">
+                        <button class="clearance-btn" data-clearance="beginner" id="clearance-btn-beginner">
+                            <i class="fa-solid fa-graduation-cap text-emerald"></i> Beginner (Academy)
+                        </button>
+                        <button class="clearance-btn" data-clearance="intermediate" id="clearance-btn-intermediate">
+                            <i class="fa-solid fa-user-ninja text-cyan"></i> Intermediate (CyberOps)
+                        </button>
+                        <button class="clearance-btn" data-clearance="advanced" id="clearance-btn-advanced">
+                            <i class="fa-solid fa-user-secret text-purple"></i> Advanced (All Unlocked)
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Profile Actions Footer -->
+                <div class="profile-actions-footer" style="margin-top: 15px; display: flex; gap: 12px;">
+                    <button type="button" class="cyber-secondary-btn danger-outline" id="reset-profile-btn" style="flex:1;">
+                        <i class="fa-solid fa-rotate-left"></i> RESET PROFILE
+                    </button>
+                    <button type="button" class="cyber-secondary-btn danger" id="logout-btn" style="flex:1;">
+                        <i class="fa-solid fa-right-from-bracket"></i> LOG OUT
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Clearance Change Confirmation -->
+    <div class="modal-overlay" id="clearance-confirm-modal">
+        <div class="modal-container alert-modal-box">
+            <button class="modal-close-btn">&times;</button>
+            <div class="alert-icon-wrap text-cyan">
+                <i class="fa-solid fa-sliders"></i>
+            </div>
+            <h3 class="alert-title">Change Clearance Level?</h3>
+            <p class="alert-desc" id="clearance-confirm-text">
+                Are you sure you want to switch your starting clearance level to <strong>Intermediate</strong>?
+            </p>
+            <p class="alert-subdesc">
+                Switching unlocks new sectors and grants base XP. If you later revert to Beginner, unlocked sectors will re-lock, but your earned XP & rank title will be preserved.
+            </p>
+            
+            <div class="alert-actions-grid">
+                <button type="button" class="cyber-primary-btn" id="confirm-clearance-change-btn">CONFIRM CHANGE</button>
+                <button type="button" class="cyber-secondary-btn" id="cancel-clearance-change-btn">CANCEL</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Reset Profile Warning -->
+    <div class="modal-overlay" id="reset-profile-modal">
+        <div class="modal-container alert-modal-box">
+            <button class="modal-close-btn">&times;</button>
+            <div class="alert-icon-wrap text-amber">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <h3 class="alert-title">Reset Profile & Progress?</h3>
+            <p class="alert-desc">
+                Are you sure you want to reset your profile? This will reset your XP to <strong class="text-danger">0 XP</strong>, revert your rank to <strong class="text-cyan">Cyber Trainee</strong>, lock higher sectors, and clear earned badges.
+            </p>
+            <p class="alert-subdesc text-danger" style="font-weight: 700;">
+                <i class="fa-solid fa-circle-exclamation"></i> WARNING: THIS ACTION CANNOT BE UNDONE!
+            </p>
+            
+            <div class="alert-actions-grid">
+                <button type="button" class="cyber-primary-btn danger-btn" id="confirm-reset-profile-btn">YES, RESET PROFILE</button>
+                <button type="button" class="cyber-secondary-btn" id="cancel-reset-profile-btn">CANCEL</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Leaderboard -->
+    <div class="modal-overlay" id="leaderboard-modal">
+        <div class="modal-container leaderboard-modal-box">
+            <button class="modal-close-btn">&times;</button>
+            
+            <div class="modal-header-block">
+                <h2><i class="fa-solid fa-trophy highlight"></i> TOP CYBER DEFENDERS</h2>
+                <p>Global Rankings across Academy, CyberOps, and Cipher Escape</p>
+            </div>
+
+            <div class="leaderboard-table-wrapper">
+                <table class="cyber-table">
+                    <thead>
+                        <tr>
+                            <th>RANK</th>
+                            <th>AGENT</th>
+                            <th>CLEARANCE</th>
+                            <th>COMPLETION</th>
+                            <th>TOTAL XP</th>
+                        </tr>
+                    </thead>
+                    <tbody id="leaderboard-body">
+                        <!-- Populated by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Platform Roadmap & Info -->
+    <div class="modal-overlay" id="roadmap-modal">
+        <div class="modal-container roadmap-modal-box">
+            <button class="modal-close-btn">&times;</button>
+            
+            <div class="modal-header-block">
+                <h2><i class="fa-solid fa-map-location-dot highlight"></i> CYBERJOURNEY ROADMAP</h2>
+                <p>A Progressive Learning Architecture</p>
+            </div>
+
+            <div class="roadmap-timeline">
+                <div class="timeline-step">
+                    <div class="step-icon emerald"><i class="fa-solid fa-graduation-cap"></i></div>
+                    <div class="step-info">
+                        <h3>1. Cyber Academy (Beginner)</h3>
+                        <p>Learn core cybersecurity fundamentals: password policies, phishing detection, malware awareness, safe browsing habits, and device hardening.</p>
+                    </div>
+                </div>
+                <div class="timeline-arrow"><i class="fa-solid fa-angle-down"></i></div>
+                <div class="timeline-step">
+                    <div class="step-icon cyan"><i class="fa-solid fa-user-ninja"></i></div>
+                    <div class="step-info">
+                        <h3>2. CyberOps Lab (Intermediate)</h3>
+                        <p>Train as a Security Operations Center (SOC) Analyst: dissect threat logs, inspect network PCAPs, perform digital forensics, and respond to incidents.</p>
+                    </div>
+                </div>
+                <div class="timeline-arrow"><i class="fa-solid fa-angle-down"></i></div>
+                <div class="timeline-step">
+                    <div class="step-icon purple"><i class="fa-solid fa-user-secret"></i></div>
+                    <div class="step-info">
+                        <h3>3. Cipher Escape (Advanced)</h3>
+                        <p>Master advanced cryptanalysis: escape cryptographic rooms by solving classic ciphers, public key encryption puzzles, and hash breakdown challenges.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Toast Container -->
+    <div id="toast-container"></div>
+
+    <script src="app.js"></script>
+</body>
+</html>

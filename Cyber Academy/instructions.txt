@@ -1,0 +1,791 @@
+==========================================================
+             CYBER ACADEMY PROJECT ROADMAP
+==========================================================
+
+Project Name:
+Cyber Academy - Learn Cybersecurity Through Games
+
+Project Type:
+Educational Cybersecurity Game
+
+Difficulty:
+Beginner Friendly
+
+Main Idea:
+--------------
+Create a game where beginners learn cybersecurity through
+quizzes, mini-games, and a virtual laptop simulator.
+
+The player becomes a cyber trainee and completes missions
+to become a Cyber Defender.
+
+==========================================================
+1. MAIN GAME FLOW
+==========================================================
+
+Player starts as:
+
+Cyber Trainee
+
+↓
+
+Complete lessons
+
+↓
+
+Answer quizzes
+
+↓
+
+Play mini-games
+
+↓
+
+Complete laptop missions
+
+↓
+
+Earn XP and badges
+
+↓
+
+Rank up
+
+↓
+
+Become Cyber Defender
+
+
+==========================================================
+2. GAME STRUCTURE
+==========================================================
+
+The game has 3 main parts:
+
+1. Learning Section
+2. Mini Games
+3. Virtual Laptop Simulator
+
+
+==========================================================
+3. LEARNING SECTION
+==========================================================
+
+Each topic starts with a short explanation.
+
+Example:
+
+Topic:
+Strong Passwords
+
+Learn:
+
+- Why passwords are important
+- What makes a password weak
+- How hackers guess passwords
+- Why MFA is useful
+
+
+After learning:
+
+Player takes a quiz.
+
+
+==========================================================
+4. QUIZ SYSTEM (MCQ)
+==========================================================
+
+Purpose:
+
+Test player's understanding.
+
+
+Features:
+
+- Multiple choice questions
+- Explanation after answer
+- Score system
+- Difficulty levels
+
+
+Example:
+
+
+Question:
+
+Which password is strongest?
+
+
+A) password123
+
+B) john2005
+
+C) T!ger#92Moon
+
+
+Answer:
+
+C
+
+
+After answer:
+
+Explain why it is better.
+
+
+==========================================================
+5. MINI GAMES
+==========================================================
+
+
+GAME 1:
+PASSWORD BUILDER
+
+
+Goal:
+
+Create a strong password.
+
+
+Player learns:
+
+- Length
+- Symbols
+- Numbers
+- Password phrases
+- MFA
+
+
+
+--------------------------
+
+
+GAME 2:
+PHISHING DETECTIVE
+
+
+Goal:
+
+Find fake emails.
+
+
+Player checks:
+
+- Sender address
+- Suspicious links
+- Urgent messages
+- Fake requests
+
+
+
+--------------------------
+
+
+GAME 3:
+SAFE WEBSITE CHECK
+
+
+Goal:
+
+Find dangerous websites.
+
+
+Player checks:
+
+- URL
+- HTTPS
+- Fake domains
+
+
+
+--------------------------
+
+
+GAME 4:
+MALWARE HUNTER
+
+
+Goal:
+
+Identify dangerous files.
+
+
+Examples:
+
+Safe:
+
+photo.jpg
+
+Dangerous:
+
+free_game_crack.exe
+
+
+
+--------------------------
+
+
+GAME 5:
+SECURITY QUIZ BATTLE
+
+
+Fast quiz against timer.
+
+==========================================================
+6. VIRTUAL LAPTOP SIMULATOR
+==========================================================
+
+The player gets a fake computer.
+
+The laptop contains:
+
+
+Desktop:
+
+- Email
+- Browser
+- Files
+- Downloads
+- Settings
+- Security Center
+- Password Manager
+- Network Panel
+
+
+==========================================================
+7. LAPTOP APPLICATIONS
+==========================================================
+
+
+EMAIL APP
+
+Purpose:
+
+Learn phishing.
+
+
+Player:
+
+- Opens emails
+- Checks sender
+- Finds scams
+- Reports threats
+
+
+
+--------------------------
+
+
+BROWSER APP
+
+Purpose:
+
+Learn safe browsing.
+
+
+Player:
+
+- Visits websites
+- Checks URLs
+- Avoids fake websites
+
+
+
+--------------------------
+
+
+FILE MANAGER
+
+Purpose:
+
+Learn file safety.
+
+
+Player:
+
+- Opens files
+- Deletes suspicious files
+- Checks downloads
+
+
+
+--------------------------
+
+
+SECURITY CENTER
+
+Purpose:
+
+Learn computer protection.
+
+
+Player enables:
+
+- Firewall
+- Antivirus
+- Updates
+- MFA
+
+
+
+--------------------------
+
+
+PASSWORD MANAGER
+
+Purpose:
+
+Learn password security.
+
+
+Player:
+
+- Creates passwords
+- Saves passwords
+- Checks strength
+
+
+
+--------------------------
+
+
+NETWORK PANEL
+
+Purpose:
+
+Learn networking basics.
+
+
+Shows:
+
+Computer
+
+↓
+
+Router
+
+↓
+
+Internet
+
+↓
+
+Website
+
+
+
+Player learns:
+
+- IP address
+- Router
+- Wi-Fi security
+
+
+
+--------------------------
+
+
+BEGINNER TERMINAL
+
+Fake terminal.
+
+Commands:
+
+help
+
+scan
+
+status
+
+check
+
+
+Used for simple learning missions.
+
+==========================================================
+8. STORY MISSIONS
+==========================================================
+
+
+Chapter 1:
+PASSWORD SECURITY
+
+
+Tasks:
+
+- Create strong password
+- Learn MFA
+- Complete password quiz
+
+
+
+Reward:
+
+Password Guardian Badge
+
+
+
+--------------------------
+
+
+Chapter 2:
+PHISHING ATTACK
+
+
+Tasks:
+
+- Find fake emails
+- Report scams
+- Complete phishing mission
+
+
+
+Reward:
+
+Phishing Detective Badge
+
+
+
+--------------------------
+
+
+Chapter 3:
+SAFE INTERNET
+
+
+Tasks:
+
+- Identify fake websites
+- Learn HTTPS
+- Secure browser
+
+
+
+Reward:
+
+Safe Browser Badge
+
+
+
+--------------------------
+
+
+Chapter 4:
+MALWARE DEFENSE
+
+
+Tasks:
+
+- Find dangerous files
+- Scan computer
+- Remove threats
+
+
+
+Reward:
+
+Malware Hunter Badge
+
+
+
+--------------------------
+
+
+Chapter 5:
+NETWORK SECURITY
+
+
+Tasks:
+
+- Understand Wi-Fi
+- Secure router
+- Learn networking
+
+
+
+Reward:
+
+Network Defender Badge
+
+
+
+--------------------------
+
+
+FINAL MISSION:
+
+CYBER DEFENSE TEST
+
+
+Complete all challenges.
+
+Become:
+
+Cyber Defender
+
+
+==========================================================
+9. PLAYER SYSTEM
+==========================================================
+
+
+Player Profile:
+
+
+Username
+
+Level
+
+XP
+
+Badges
+
+Completed Missions
+
+Accuracy
+
+Play Time
+
+
+
+==========================================================
+10. REWARD SYSTEM
+==========================================================
+
+
+XP:
+
+Complete missions
+
+Answer questions
+
+Finish challenges
+
+
+Ranks:
+
+
+Level 1:
+Cyber Trainee
+
+
+Level 5:
+Security Student
+
+
+Level 10:
+Cyber Defender
+
+
+
+==========================================================
+11. ACHIEVEMENTS
+==========================================================
+
+
+First Mission
+
+Password Master
+
+Phishing Expert
+
+Safe Browser
+
+Malware Hunter
+
+Perfect Score
+
+No Hint Challenge
+
+Cyber Defender
+
+
+
+==========================================================
+12. DAILY CHALLENGES
+==========================================================
+
+
+Every day:
+
+New quiz
+
+New phishing email
+
+New security task
+
+
+Rewards:
+
+Extra XP
+
+Coins
+
+Badges
+
+
+
+==========================================================
+13. DATABASE
+==========================================================
+
+
+Users
+
+- Name
+- Email
+- Password
+- Level
+- XP
+
+
+Progress
+
+- Completed missions
+- Scores
+
+
+Questions
+
+- Question
+- Options
+- Answer
+
+
+Achievements
+
+- Badge name
+- Description
+
+
+==========================================================
+14. TECH STACK
+==========================================================
+
+
+Frontend:
+
+React
+
+TypeScript
+
+Tailwind CSS
+
+
+Backend:
+
+Node.js / Express
+
+or
+
+Python FastAPI
+
+
+Database:
+
+PostgreSQL
+
+
+Authentication:
+
+Firebase Auth / Clerk
+
+
+
+==========================================================
+15. DEVELOPMENT PLAN
+==========================================================
+
+
+PHASE 1:
+
+Build basic game.
+
+Create:
+
+- Login
+- Home page
+- Quiz system
+- XP system
+
+
+--------------------------
+
+
+PHASE 2:
+
+Add mini-games.
+
+Create:
+
+- Password game
+- Phishing game
+- Website checker
+
+
+--------------------------
+
+
+PHASE 3:
+
+Build Virtual Laptop.
+
+Add:
+
+- Email app
+- Browser
+- Files
+- Security Center
+
+
+--------------------------
+
+
+PHASE 4:
+
+Improve game.
+
+Add:
+
+- Achievements
+- Leaderboard
+- Daily challenges
+- Better animations
+
+
+--------------------------
+
+
+PHASE 5:
+
+Advanced features.
+
+Add:
+
+- AI generated missions
+- Multiplayer quiz
+- Teacher dashboard
+
+
+
+==========================================================
+16. FINAL GOAL
+==========================================================
+
+
+Create a fun cybersecurity learning game where beginners
+can understand real cybersecurity concepts by playing.
+
+The player should learn:
+
+- How to create strong passwords
+- How to detect scams
+- How to browse safely
+- How malware works
+- How to protect devices
+- Basic networking concepts
+
+
+==========================================================
+END OF ROADMAP
+==========================================================

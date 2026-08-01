@@ -1,0 +1,757 @@
+==========================================================
+              CYBEROPS LAB PROJECT ROADMAP
+==========================================================
+
+Project Name:
+CyberOps Lab - Security Analyst Training Simulator
+
+
+Project Type:
+Intermediate Cybersecurity Learning Game
+
+
+Difficulty:
+Intermediate
+
+
+Purpose:
+--------------
+A game that teaches players how cybersecurity defenders
+investigate, analyze, and respond to security incidents.
+
+This project connects beginner cybersecurity knowledge with
+advanced cryptography and security challenges.
+
+
+==========================================================
+1. STORY
+==========================================================
+
+The player has completed Cyber Academy and joins a Security
+Operations Center (SOC) as a Junior Security Analyst.
+
+Their job:
+
+- Investigate suspicious activities
+- Analyze security events
+- Find threats
+- Protect systems
+
+
+Player Rank:
+
+Level 1:
+Junior Analyst
+
+↓
+
+Level 5:
+Security Analyst
+
+↓
+
+Level 10:
+Threat Hunter
+
+
+==========================================================
+2. MAIN GAME FLOW
+==========================================================
+
+
+Mission Briefing
+
+↓
+
+Collect Evidence
+
+↓
+
+Analyze Information
+
+↓
+
+Solve Security Problem
+
+↓
+
+Create Report
+
+↓
+
+Earn XP
+
+↓
+
+Unlock New Missions
+
+
+
+==========================================================
+3. CORE MODULES
+==========================================================
+
+
+MODULE 1:
+LOG INVESTIGATION
+
+
+Goal:
+
+Teach players how security events are recorded.
+
+
+Player learns:
+
+- Login events
+- Failed attempts
+- User activity
+- Suspicious behavior
+
+
+Example:
+
+
+System Log:
+
+10:00 Login successful
+
+10:01 Login failed
+
+10:02 Login failed
+
+10:03 Login failed
+
+10:04 Admin login from another country
+
+
+Question:
+
+What happened?
+
+
+Answer:
+
+Possible brute force attack
+
+
+
+==========================================================
+MODULE 2:
+PASSWORD SECURITY ANALYSIS
+==========================================================
+
+
+Goal:
+
+Understand how attackers target weak passwords.
+
+
+Learn:
+
+- Password strength
+- Brute force attacks
+- Dictionary attacks
+- Password hashing
+
+
+Game:
+
+
+Compare:
+
+
+Password A:
+
+hello123
+
+
+Password B:
+
+T!ger#92Moon
+
+
+Player predicts which is safer.
+
+
+
+==========================================================
+MODULE 3:
+HASH DETECTIVE
+==========================================================
+
+
+Goal:
+
+Learn hashing concepts.
+
+
+Topics:
+
+- Hash functions
+- File integrity
+- Password hashes
+
+
+Example:
+
+
+File A Hash:
+
+8f14e45f
+
+
+File B Hash:
+
+8f14e45f
+
+
+Question:
+
+Are files identical?
+
+
+Answer:
+
+Yes
+
+
+
+==========================================================
+MODULE 4:
+NETWORK INVESTIGATION
+==========================================================
+
+
+Goal:
+
+Learn basic networking.
+
+
+Topics:
+
+
+IP Address
+
+Ports
+
+Protocols
+
+DNS
+
+HTTP/HTTPS
+
+
+Example:
+
+
+Traffic:
+
+
+Computer
+
+↓
+
+Port 443
+
+↓
+
+Website
+
+
+Question:
+
+What protocol is being used?
+
+
+Answer:
+
+HTTPS
+
+
+
+==========================================================
+MODULE 5:
+PACKET ANALYSIS
+==========================================================
+
+
+Goal:
+
+Understand network communication.
+
+
+Player views simplified packets.
+
+
+Example:
+
+
+Source:
+
+192.168.1.5
+
+
+Destination:
+
+website.com
+
+
+Port:
+
+443
+
+
+Player identifies:
+
+Safe traffic
+
+or
+
+Suspicious traffic
+
+
+
+==========================================================
+MODULE 6:
+MALWARE INVESTIGATION
+==========================================================
+
+
+Goal:
+
+Learn how malware incidents happen.
+
+
+Player investigates:
+
+
+Files
+
+Downloads
+
+Emails
+
+Processes
+
+
+Example:
+
+
+Evidence:
+
+
+File:
+
+free_game.exe
+
+
+Downloaded from:
+
+unknown-site.com
+
+
+Result:
+
+Suspicious file
+
+
+
+==========================================================
+MODULE 7:
+DIGITAL FORENSICS
+==========================================================
+
+
+Goal:
+
+Investigate after an attack.
+
+
+Player checks:
+
+
+Browser History
+
+Deleted Files
+
+USB Activity
+
+System Logs
+
+
+Mission:
+
+Find how an attacker entered the system.
+
+
+
+==========================================================
+MODULE 8:
+ENCRYPTION BASICS
+==========================================================
+
+
+Preparation for Cipher Escape.
+
+
+Teach:
+
+
+Encoding:
+
+Base64
+
+
+Hashing:
+
+SHA concepts
+
+
+Encryption:
+
+Keys and decryption
+
+
+Players learn:
+
+Difference between:
+
+Encoding
+
+Hashing
+
+Encryption
+
+
+
+==========================================================
+MODULE 9:
+FIREWALL SIMULATOR
+==========================================================
+
+
+Player manages network rules.
+
+
+Example:
+
+
+Allow:
+
+HTTPS
+
+
+Block:
+
+Unknown connection
+
+
+Learn:
+
+- Ports
+- Rules
+- Network protection
+
+
+
+==========================================================
+MODULE 10:
+INCIDENT RESPONSE
+==========================================================
+
+
+Final missions combine everything.
+
+
+Example:
+
+
+Company Attack
+
+
+Tasks:
+
+
+1. Check logs
+
+2. Find suspicious activity
+
+3. Analyze malware
+
+4. Block threat
+
+5. Write incident report
+
+
+
+==========================================================
+4. VIRTUAL SECURITY CENTER
+==========================================================
+
+
+The player has a security workstation.
+
+
+Applications:
+
+
+Log Viewer
+
+Packet Analyzer
+
+File Scanner
+
+Hash Checker
+
+Firewall Manager
+
+Threat Database
+
+Incident Reports
+
+
+
+==========================================================
+5. MISSION TYPES
+==========================================================
+
+
+Investigation Mission
+
+Find the attacker.
+
+
+Analysis Mission
+
+Understand the problem.
+
+
+Defense Mission
+
+Protect the system.
+
+
+Report Mission
+
+Explain findings.
+
+
+
+==========================================================
+6. REWARD SYSTEM
+==========================================================
+
+
+XP
+
+Badges
+
+Ranks
+
+Achievements
+
+
+Ranks:
+
+
+Junior Analyst
+
+Security Analyst
+
+Threat Hunter
+
+Cyber Defender
+
+
+
+==========================================================
+7. ACHIEVEMENTS
+==========================================================
+
+
+First Investigation
+
+
+Log Master
+
+
+Network Detective
+
+
+Malware Hunter
+
+
+Hash Expert
+
+
+Incident Responder
+
+
+Threat Hunter
+
+
+
+==========================================================
+8. DATABASE
+==========================================================
+
+
+Users
+
+
+Progress
+
+
+Missions
+
+
+Evidence
+
+
+Reports
+
+
+Scores
+
+
+Achievements
+
+
+
+==========================================================
+9. TECH STACK
+==========================================================
+
+
+Frontend:
+
+React
+
+TypeScript
+
+Tailwind CSS
+
+
+Backend:
+
+Node.js / Express
+
+or
+
+Python FastAPI
+
+
+Database:
+
+PostgreSQL
+
+
+
+==========================================================
+10. DEVELOPMENT PHASES
+==========================================================
+
+
+PHASE 1:
+
+Basic System
+
+
+Create:
+
+- Login
+- Profile
+- Mission system
+- XP system
+
+
+
+--------------------------
+
+
+PHASE 2:
+
+Investigation Games
+
+
+Add:
+
+- Log viewer
+- Password analysis
+- Hash checker
+
+
+
+--------------------------
+
+
+PHASE 3:
+
+Security Simulator
+
+
+Add:
+
+- Network panel
+- Packet analyzer
+- Firewall simulator
+
+
+
+--------------------------
+
+
+PHASE 4:
+
+Advanced Features
+
+
+Add:
+
+- Digital forensics
+- Incident response
+- Leaderboards
+- Daily missions
+
+
+
+--------------------------
+
+
+PHASE 5:
+
+Connection With Cipher Escape
+
+
+Unlock:
+
+Advanced cryptography missions
+
+Complex puzzles
+
+Multi-layer challenges
+
+
+
+==========================================================
+11. FINAL GOAL
+==========================================================
+
+
+Create an interactive security training simulator where
+players learn how cybersecurity professionals investigate
+and defend systems.
+
+After completing CyberOps Lab, players should understand:
+
+- How attacks happen
+- How defenders detect threats
+- How security tools work
+- Basic cryptography concepts
+- Security investigation methods
+
+
+==========================================================
+END OF ROADMAP
+==========================================================

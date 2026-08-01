@@ -1,0 +1,474 @@
+==========================================================
+                CIPHER ESCAPE - PROJECT GUIDE
+==========================================================
+
+Project Type:
+-------------
+Puzzle / Escape Room / Cryptography Game
+
+Difficulty:
+-----------
+Intermediate → Advanced
+
+Goal:
+-----
+Build a story-driven puzzle game where players escape rooms by solving
+different encryption, decoding, and logic puzzles.
+
+==========================================================
+1. CORE GAMEPLAY
+==========================================================
+
+Player enters a room
+        ↓
+Reads story or mission
+        ↓
+Solves puzzle
+        ↓
+Door unlocks
+        ↓
+Collect reward
+        ↓
+Move to next room
+
+Each room should feel unique.
+
+==========================================================
+2. STORY MODE
+==========================================================
+
+Example Story
+
+"You wake up inside an abandoned cyber security laboratory.
+Every door is locked.
+The only way to escape is by solving encrypted messages left
+by an unknown hacker."
+
+Create multiple chapters.
+
+Example:
+
+Chapter 1
+---------
+Training Lab
+
+Chapter 2
+---------
+Security Office
+
+Chapter 3
+---------
+Research Facility
+
+Chapter 4
+---------
+Server Room
+
+Chapter 5
+---------
+Final Control Center
+
+==========================================================
+3. PUZZLE TYPES
+==========================================================
+
+Required
+
+✓ Caesar Cipher
+✓ Morse Code
+✓ Binary
+✓ Base64
+✓ Reverse Text
+✓ Vigenère Cipher
+✓ ROT13
+
+Optional
+
+□ QR Code Puzzle
+□ Hidden Image Puzzle
+□ Audio Cipher
+□ Frequency Analysis
+□ Pig Latin
+□ Hexadecimal
+□ Braille
+□ Semaphore
+□ DNA Encoding
+
+==========================================================
+4. ROOM STRUCTURE
+==========================================================
+
+Each room contains
+
+- Story text
+- Puzzle
+- Hint button
+- Submit button
+- Timer
+- Attempts counter
+- Reward
+- Exit door animation
+
+==========================================================
+5. DIFFICULTY SYSTEM
+==========================================================
+
+Easy
+
+• Simple ciphers
+• Unlimited time
+
+Medium
+
+• Less hints
+• Time limit
+
+Hard
+
+• Multiple encryption layers
+
+Expert
+
+• No hints
+• Randomized puzzles
+• Hidden clues
+
+==========================================================
+6. HINT SYSTEM
+==========================================================
+
+Hint 1
+-------
+Explains puzzle type
+
+Hint 2
+-------
+Provides clue
+
+Hint 3
+-------
+Reveals one character
+
+Using hints reduces score.
+
+==========================================================
+7. SCORING SYSTEM
+==========================================================
+
+Correct Answer
++100
+
+Speed Bonus
++50
+
+No Hint Bonus
++30
+
+Perfect Room
++100
+
+Wrong Answer
+-10
+
+Hint Used
+-20
+
+==========================================================
+8. PLAYER PROGRESSION
+==========================================================
+
+Gain
+
+XP
+Coins
+Achievements
+
+Unlock
+
+Themes
+Avatars
+Backgrounds
+Music
+Difficulty Modes
+
+==========================================================
+9. ACHIEVEMENTS
+==========================================================
+
+First Escape
+
+Cipher Apprentice
+
+Code Breaker
+
+Puzzle Master
+
+No Hint Hero
+
+Fast Solver
+
+Escape Artist
+
+Complete Story
+
+==========================================================
+10. INVENTORY SYSTEM (Optional)
+==========================================================
+
+Items
+
+Flashlight
+
+Notebook
+
+USB Drive
+
+Keycard
+
+Decoder
+
+Some puzzles require collected items.
+
+==========================================================
+11. GAME MODES
+==========================================================
+
+Story Mode
+
+Daily Challenge
+
+Endless Mode
+
+Practice Mode
+
+Speed Run
+
+Multiplayer Race (Optional)
+
+==========================================================
+12. USER ACCOUNT
+==========================================================
+
+Register
+
+Login
+
+Save Progress
+
+Statistics
+
+Leaderboard
+
+Cloud Save
+
+==========================================================
+13. PLAYER STATISTICS
+==========================================================
+
+Rooms Cleared
+
+Time Played
+
+Accuracy
+
+Fastest Solve
+
+Hints Used
+
+Achievements
+
+Highest Score
+
+==========================================================
+14. UI PAGES
+==========================================================
+
+Splash Screen
+
+Home
+
+Login/Register
+
+Level Selection
+
+Gameplay
+
+Inventory
+
+Achievements
+
+Leaderboard
+
+Settings
+
+Credits
+
+==========================================================
+15. SETTINGS
+==========================================================
+
+Dark Mode
+
+Music Volume
+
+Sound Effects
+
+Language
+
+Difficulty
+
+Accessibility Options
+
+==========================================================
+16. ANIMATIONS
+==========================================================
+
+Door Opening
+
+Puzzle Complete
+
+Wrong Answer Shake
+
+Achievement Popup
+
+Coin Animation
+
+XP Animation
+
+Chapter Transition
+
+==========================================================
+17. SOUND EFFECTS
+==========================================================
+
+Button Click
+
+Correct Answer
+
+Wrong Answer
+
+Door Unlock
+
+Background Music
+
+Victory Music
+
+==========================================================
+18. DATABASE TABLES
+==========================================================
+
+Users
+
+Levels
+
+Progress
+
+Achievements
+
+Scores
+
+Daily Challenges
+
+==========================================================
+19. OPTIONAL AI FEATURES
+==========================================================
+
+Generate new cipher puzzles
+
+Generate hints
+
+Adaptive difficulty
+
+Explain solved puzzles
+
+Create daily challenges automatically
+
+==========================================================
+20. BONUS FEATURES
+==========================================================
+
+Puzzle Editor
+
+Community Levels
+
+Friend Challenges
+
+Share Results
+
+Seasonal Events
+
+Hidden Secret Rooms
+
+Collectibles
+
+==========================================================
+21. TECH STACK
+==========================================================
+
+Frontend
+---------
+React
+TypeScript
+Tailwind CSS
+
+Backend
+--------
+Node.js (Express/NestJS)
+or
+Python (FastAPI)
+
+Database
+--------
+PostgreSQL
+
+Authentication
+--------------
+Clerk / Auth.js / Firebase
+
+Realtime (Optional)
+-------------------
+Socket.IO
+
+==========================================================
+22. DEVELOPMENT PHASES
+==========================================================
+
+Phase 1
+--------
+✔ Authentication
+✔ Home Screen
+✔ Story Mode
+✔ Caesar Cipher
+
+Phase 2
+--------
+✔ Morse
+✔ Binary
+✔ Base64
+✔ Save Progress
+
+Phase 3
+--------
+✔ Achievements
+✔ Leaderboard
+✔ Inventory
+✔ Better UI
+
+Phase 4
+--------
+✔ Daily Challenges
+✔ AI Puzzle Generator
+✔ Multiplayer
+✔ Puzzle Editor
+
+==========================================================
+23. FINAL GOAL
+==========================================================
+
+Create a polished puzzle game that is enjoyable to play,
+teaches cryptography concepts, and demonstrates strong
+frontend, backend, database, authentication, and game
+development skills.
+
+End of Document
+==========================================================

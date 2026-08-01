@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cipher Escape (Level 03) | CyberJourney</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Orbitron:wght@600;800&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css?v=1">
+</head>
+<body>
+    <div class="cipher-container">
+        <!-- Top Navbar -->
+        <header class="soc-header">
+            <div>
+                <h1 class="brand-title"><i class="fa-solid fa-user-secret text-purple"></i> CIPHER ESCAPE</h1>
+                <span style="font-size:0.8rem; color:var(--text-muted);">LEVEL 03 • CRYPTOGRAPHIC ESCAPE ROOM SIMULATOR</span>
+            </div>
+
+            <div class="soc-user-widget">
+                <div class="user-badge">
+                    <div class="user-avatar" id="cipher-user-avatar">T</div>
+                    <div>
+                        <div id="cipher-user-name" style="font-size:0.9rem; color:#fff;">Trainee</div>
+                        <div id="cipher-user-rank" class="text-purple" style="font-size:0.75rem;">Puzzle Master</div>
+                    </div>
+                </div>
+                <div class="user-badge" id="cipher-user-xp" style="border-color:var(--purple);">0 XP</div>
+                <a href="../index.html" class="cyber-btn-purple" style="text-decoration:none;"><i class="fa-solid fa-arrow-left"></i> MAIN HUB</a>
+            </div>
+        </header>
+
+        <!-- Main Navigation Tabs -->
+        <nav class="soc-nav-tabs">
+            <button class="soc-tab-btn active" data-view="modules"><i class="fa-solid fa-book-bookmark"></i> CIPHER MODULES</button>
+            <button class="soc-tab-btn" data-view="tools"><i class="fa-solid fa-wrench"></i> DECODER WORKBENCH</button>
+            <button class="soc-tab-btn" data-view="rooms"><i class="fa-solid fa-door-closed"></i> ESCAPE ROOMS</button>
+        </nav>
+
+        <!-- View 1: 5 Cryptography Learning Modules -->
+        <main class="soc-view active" id="view-modules">
+            <div style="margin-bottom:16px;">
+                <h2><i class="fa-solid fa-book-bookmark text-purple"></i> Cryptography & Cipher Learning Guides</h2>
+                <p style="color:var(--text-muted);">Master classical and modern cryptographic techniques before entering the escape chambers.</p>
+            </div>
+            <div class="rooms-grid-container" id="cipher-modules-container"></div>
+        </main>
+
+        <!-- View 2: Decoder Workbench Tools -->
+        <main class="soc-view" id="view-tools">
+            <div class="workstation-app-bar">
+                <button class="app-tab-btn active" data-tool="caesar"><i class="fa-solid fa-repeat"></i> CAESAR DECODER</button>
+                <button class="app-tab-btn" data-tool="morse"><i class="fa-solid fa-rss"></i> MORSE INTERPRETER</button>
+                <button class="app-tab-btn" data-tool="binary"><i class="fa-solid fa-code"></i> BINARY / HEX</button>
+                <button class="app-tab-btn" data-tool="base64"><i class="fa-solid fa-cube"></i> BASE64 / VIGENÈRE</button>
+            </div>
+            <div id="decoder-stage-container"></div>
+        </main>
+
+        <!-- View 3: 5 Story Escape Rooms -->
+        <main class="soc-view" id="view-rooms">
+            <div style="margin-bottom:16px;">
+                <h2><i class="fa-solid fa-key text-purple"></i> Cryptographic Chamber Escape</h2>
+                <p style="color:var(--text-muted);">Break through 5 locked laboratory chambers by solving Caesar shifts, Morse signals, Base64 memory dumps, Vigenère keys, and 8-bit binary bytes!</p>
+            </div>
+            <div id="cipher-rooms-container"></div>
+        </main>
+    </div>
+
+    <!-- Chapter/Room Modal -->
+    <div class="cipher-modal-overlay" id="cipher-modal">
+        <div class="cipher-modal-box">
+            <button class="close-cipher-modal" id="btn-close-cipher-modal">&times;</button>
+            <div id="cipher-modal-content"></div>
+        </div>
+    </div>
+
+    <!-- Data Scripts -->
+    <script src="data/modules_data.js?v=7"></script>
+    <script src="data/rooms_data.js?v=7"></script>
+
+    <!-- Component Scripts -->
+    <script src="components/cipher_modules.js?v=7"></script>
+    <script src="components/escape_rooms.js?v=7"></script>
+    <script src="components/cipher_tools.js?v=7"></script>
+
+    <!-- Core App Engine -->
+    <script src="app.js?v=7"></script>
+</body>
+</html>

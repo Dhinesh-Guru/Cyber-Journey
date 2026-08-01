@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberOps Lab (Level 02) | CyberJourney</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Orbitron:wght@600;800&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css?v=1">
+</head>
+<body>
+    <div class="cyberops-container">
+        <!-- Top Navbar -->
+        <header class="soc-header">
+            <div>
+                <h1 class="brand-title"><i class="fa-solid fa-user-ninja text-cyan"></i> CYBEROPS LAB</h1>
+                <span style="font-size:0.8rem; color:var(--text-muted);">LEVEL 02 • SOC DEFENDER TRAINING SIMULATOR</span>
+            </div>
+
+            <div class="soc-user-widget">
+                <div class="user-badge">
+                    <div class="user-avatar" id="soc-user-avatar">T</div>
+                    <div>
+                        <div id="soc-user-name" style="font-size:0.9rem; color:#fff;">Trainee</div>
+                        <div id="soc-user-rank" class="text-cyan" style="font-size:0.75rem;">Junior Analyst</div>
+                    </div>
+                </div>
+                <div class="user-badge" id="soc-user-xp" style="border-color:var(--cyan);">0 XP</div>
+                <a href="../index.html" class="cyber-btn-cyan" style="text-decoration:none;"><i class="fa-solid fa-arrow-left"></i> MAIN HUB</a>
+            </div>
+        </header>
+
+        <!-- Main Navigation Tabs -->
+        <nav class="soc-nav-tabs">
+            <button class="soc-tab-btn active" data-view="modules"><i class="fa-solid fa-book-bookmark"></i> SOC MODULES</button>
+            <button class="soc-tab-btn" data-view="workstation"><i class="fa-solid fa-laptop-code"></i> SOC WORKSTATION APPS</button>
+            <button class="soc-tab-btn" data-view="incident"><i class="fa-solid fa-triangle-exclamation"></i> INCIDENT RESPONSE TRIAGE</button>
+        </nav>
+
+        <!-- View 1: 10 Investigation Modules -->
+        <main class="soc-view active" id="view-modules">
+            <div style="margin-bottom:16px;">
+                <h2><i class="fa-solid fa-shield-halved text-cyan"></i> SOC Analyst Investigation Training</h2>
+                <p style="color:var(--text-muted);">Complete 10 hands-on defender missions to master SIEM logs, packet analysis, hash inspection, and firewall rules.</p>
+            </div>
+            <div class="soc-modules-grid" id="soc-modules-container"></div>
+        </main>
+
+        <!-- View 2: SOC Workstation Apps -->
+        <main class="soc-view" id="view-workstation">
+            <div class="workstation-app-bar">
+                <button class="app-tab-btn active" data-app="logs"><i class="fa-solid fa-file-lines"></i> LOG VIEWER</button>
+                <button class="app-tab-btn" data-app="hash"><i class="fa-solid fa-fingerprint"></i> HASH CHECKER</button>
+                <button class="app-tab-btn" data-app="pcap"><i class="fa-solid fa-magnifying-glass-chart"></i> PCAP INSPECTOR</button>
+                <button class="app-tab-btn" data-app="firewall"><i class="fa-solid fa-shield-halved"></i> FIREWALL CONSOLE</button>
+            </div>
+            <div id="workstation-stage-container"></div>
+        </main>
+
+        <!-- View 3: Incident Response Triage -->
+        <main class="soc-view" id="view-incident">
+            <div id="incident-stage-container"></div>
+        </main>
+    </div>
+
+    <!-- Chapter Modal -->
+    <div class="soc-modal-overlay" id="soc-modal">
+        <div class="soc-modal-box" id="soc-modal-box">
+            <button class="close-soc-modal" id="btn-close-soc-modal">&times;</button>
+            <div id="soc-modal-content"></div>
+        </div>
+    </div>
+
+    <!-- Data Scripts -->
+    <script src="data/modules_data.js?v=4"></script>
+    <script src="data/log_samples.js?v=4"></script>
+    <script src="data/pcap_samples.js?v=4"></script>
+    <script src="data/incidents_data.js?v=4"></script>
+
+    <!-- Component Scripts -->
+    <script src="components/soc_modules.js?v=4"></script>
+    <script src="components/soc_workstation.js?v=4"></script>
+    <script src="components/incident_simulator.js?v=4"></script>
+
+    <!-- App Engine -->
+    <script src="app.js?v=4"></script>
+</body>
+</html>
