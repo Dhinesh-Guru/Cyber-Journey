@@ -66,17 +66,41 @@ const FirebaseSyncService = (function () {
         }
     }
 
-    async function signInWithCloud(email, password) {
+    async function signInWithCloud(identifier, password) {
         if (!isFirebaseActive) return null;
         try {
-            const userCred = await auth.signInWithEmailAndPassword(email, password);
+            let userEmail = identifier.trim();
+
+            // If identifier is a username (no @), query Firestore users collection to find associated email
+            if (!userEmail.includes('@')) {
+                const querySnap = await db.collection('users')
+                    .where('username', '==', identifier.trim())
+                    .limit(1)
+                    .get();
+
+                if (!querySnap.empty) {
+                    userEmail = querySnap.docs[0].data().email;
+                } else {
+                    // Case-insensitive fallback lookup
+                    const allSnap = await db.collection('users').get();
+                    const matched = allSnap.docs.find(d => d.data().username && d.data().username.toLowerCase() === identifier.trim().toLowerCase());
+                    if (matched) {
+                        userEmail = matched.data().email;
+                    }
+                }
+            }
+
+            const userCred = await auth.signInWithEmailAndPassword(userEmail, password);
             const doc = await db.collection('users').doc(userCred.user.uid).get();
             if (doc.exists) {
-                return doc.data();
+                const data = doc.data();
+                data.password = password; // Preserve password for local verification
+                return data;
             }
             return null;
         } catch (e) {
-            throw e;
+            console.error('Firebase cloud login failed:', e);
+            return null;
         }
     }
 

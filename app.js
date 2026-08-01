@@ -639,16 +639,28 @@
             }
         });
 
-        // --- Generic Security Error Login Handler ---
-        document.getElementById('login-form').addEventListener('submit', (e) => {
+        // --- Multi-Device Cloud & Local Login Handler ---
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const identifier = document.getElementById('login-username').value.trim();
             const pass = document.getElementById('login-password').value.trim();
             
             const registered = getRegisteredUsers();
-            const foundUser = registered.find(u => 
+            let foundUser = registered.find(u => 
                 (u.username.toLowerCase() === identifier.toLowerCase() || (u.email && u.email.toLowerCase() === identifier.toLowerCase()))
             );
+
+            // If not found locally or password mismatch, attempt Firebase Cloud Login fallback
+            if ((!foundUser || (foundUser.password && foundUser.password !== pass)) && typeof FirebaseSyncService !== 'undefined' && FirebaseSyncService.isCloudActive()) {
+                try {
+                    const cloudUser = await FirebaseSyncService.signInWithCloud(identifier, pass);
+                    if (cloudUser) {
+                        foundUser = cloudUser;
+                    }
+                } catch (err) {
+                    console.warn('Cloud login fallback attempt failed:', err);
+                }
+            }
 
             // Generic security error response: Do not reveal if username or password caused failure!
             if (!foundUser || (foundUser.password && foundUser.password !== pass)) {
@@ -672,8 +684,8 @@
                 isRegistered: true,
                 username: foundUser.username,
                 email: foundUser.email,
-                password: foundUser.password,
-                passwordHistory: foundUser.passwordHistory || [foundUser.password],
+                password: foundUser.password || pass,
+                passwordHistory: foundUser.passwordHistory || [foundUser.password || pass],
                 avatar: foundUser.avatar || null,
                 xp: foundUser.xp || 0,
                 rank: foundUser.rank || 'Cyber Trainee',
@@ -698,7 +710,7 @@
         });
 
         // --- Signup Form Submission ---
-        document.getElementById('signup-form').addEventListener('submit', (e) => {
+        document.getElementById('signup-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const username = document.getElementById('signup-username').value.trim();
             const email = document.getElementById('signup-email').value.trim();
@@ -727,11 +739,21 @@
 
             setExperienceClearance(expLevel, true);
             addXP(50); // Bonus registration XP
+
+            // Sync account creation to Firebase Cloud
+            if (typeof FirebaseSyncService !== 'undefined' && FirebaseSyncService.isCloudActive()) {
+                try {
+                    await FirebaseSyncService.signUpWithCloud(email, password, username);
+                } catch (cloudErr) {
+                    console.warn('Firebase Cloud signup notice:', cloudErr);
+                }
+            }
+
             resetAuthForms();
             saveUser();
             closeModal('auth-modal');
             playSound('login');
-            showToast(`<i class="fa-solid fa-user-plus highlight"></i> Welcome ${username}! Account created.`);
+            showToast(`<i class="fa-solid fa-user-plus highlight"></i> Welcome ${username}! Account registered.`);
         });
 
         // --- Password Reset Key Link Generator ---
