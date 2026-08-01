@@ -103,20 +103,42 @@ const FirebaseSyncService = (function () {
 
             // 2. If direct key lookup missed, search Firestore collection case-insensitively
             if (!data) {
-                const snap = await db.collection('users').get();
-                const matched = snap.docs.find(d => {
-                    const dData = d.data();
-                    const uName = (dData.username || '').toLowerCase();
-                    const uEmail = (dData.email || '').toLowerCase();
-                    return uName === idKey || uEmail === idKey;
-                });
+                try {
+                    const snap = await db.collection('users').get();
+                    const matched = snap.docs.find(d => {
+                        const dData = d.data();
+                        const uName = (dData.username || '').toLowerCase();
+                        const uEmail = (dData.email || '').toLowerCase();
+                        return uName === idKey || uEmail === idKey;
+                    });
 
-                if (matched) {
-                    data = matched.data();
+                    if (matched) {
+                        data = matched.data();
+                    }
+                } catch (e) {}
+            }
+
+            // 3. Fallback: Try Firebase Auth directly if identifier contains '@'
+            if (!data && identifier.includes('@')) {
+                try {
+                    const userCred = await auth.signInWithEmailAndPassword(identifier, password);
+                    if (userCred && userCred.user) {
+                        const userDoc = await db.collection('users').doc(userCred.user.uid).get();
+                        if (userDoc.exists) return userDoc.data();
+                        return {
+                            username: userCred.user.displayName || identifier.split('@')[0],
+                            email: identifier,
+                            password: password,
+                            xp: 50,
+                            progress: { academy: 0, cyberops: 0, cipher: 0 }
+                        };
+                    }
+                } catch (authErr) {
+                    console.warn('Direct Firebase Auth signin fallback notice:', authErr);
                 }
             }
 
-            // 3. Password Verification
+            // 4. Password Verification
             if (data) {
                 if (data.password && data.password !== password) {
                     console.warn('Cloud login password mismatch');
@@ -127,9 +149,7 @@ const FirebaseSyncService = (function () {
                 if (data.email && data.email.includes('@')) {
                     try {
                         await auth.signInWithEmailAndPassword(data.email, password);
-                    } catch (aErr) {
-                        console.warn('Firebase Auth background signin notice:', aErr);
-                    }
+                    } catch (aErr) {}
                 }
 
                 return data;
