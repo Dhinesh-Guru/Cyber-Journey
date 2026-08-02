@@ -170,7 +170,7 @@
             cipher: isCipherUnlocked || currentUser.unlocked.cipher
         };
 
-        saveUser();
+        saveUser(false); // Save locally and update UI, but do NOT push back to Cloud to prevent snapshot loops!
         updateUI();
     }
 
@@ -392,11 +392,11 @@
         return { ...DEFAULT_USER };
     }
 
-    function saveUser() {
+    function saveUser(syncToCloud = true) {
         localStorage.setItem(STORAGE_KEY_USER, JSON.stringify(currentUser));
         if (currentUser.isLoggedIn && currentUser.isRegistered) {
             saveRegisteredUser(currentUser);
-            if (typeof FirebaseSyncService !== 'undefined' && FirebaseSyncService.isCloudActive()) {
+            if (syncToCloud && typeof FirebaseSyncService !== 'undefined' && FirebaseSyncService.isCloudActive()) {
                 FirebaseSyncService.syncProgressToCloud(currentUser);
             }
         }
