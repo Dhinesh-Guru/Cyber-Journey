@@ -445,7 +445,7 @@
                 : currentUser.username.charAt(0).toUpperCase();
             
             widget.innerHTML = `
-                <div class="user-profile-pill" id="open-profile-pill">
+                <div class="user-profile-pill" id="open-profile-pill" style="cursor: pointer;">
                     <div class="user-avatar-mini">${avatarContent}</div>
                     <div class="user-info-mini">
                         <span class="user-name-lbl">${currentUser.username}</span>
@@ -453,17 +453,27 @@
                     </div>
                 </div>
             `;
-            document.getElementById('open-profile-pill').addEventListener('click', () => openModal('profile-modal'));
+            const pillEl = document.getElementById('open-profile-pill');
+            if (pillEl) {
+                pillEl.onclick = (e) => {
+                    e.stopPropagation();
+                    openModal('profile-modal');
+                };
+            }
         } else {
             widget.innerHTML = `
-                <button class="auth-trigger-btn" id="open-auth-btn">
+                <button class="auth-trigger-btn" id="open-auth-btn" style="cursor: pointer;">
                     <i class="fa-solid fa-right-to-bracket"></i> Sign In / Register
                 </button>
             `;
-            document.getElementById('open-auth-btn').addEventListener('click', () => {
-                resetAuthForms();
-                openModal('auth-modal');
-            });
+            const authBtnEl = document.getElementById('open-auth-btn');
+            if (authBtnEl) {
+                authBtnEl.onclick = (e) => {
+                    e.stopPropagation();
+                    resetAuthForms();
+                    openModal('auth-modal');
+                };
+            }
         }
 
         // Sector Cards
@@ -658,6 +668,24 @@
             openModal('leaderboard-modal');
         });
         document.getElementById('nav-roadmap-btn').addEventListener('click', () => openModal('roadmap-modal'));
+
+        // User Widget Event Delegation (Profile & Auth Trigger)
+        const userWidget = document.getElementById('user-widget');
+        if (userWidget) {
+            userWidget.addEventListener('click', (e) => {
+                const pill = e.target.closest('#open-profile-pill');
+                if (pill) {
+                    openModal('profile-modal');
+                    return;
+                }
+                const authBtn = e.target.closest('#open-auth-btn');
+                if (authBtn) {
+                    resetAuthForms();
+                    openModal('auth-modal');
+                    return;
+                }
+            });
+        }
 
         // Sound Toggle
         document.getElementById('sound-toggle-btn').addEventListener('click', () => {
