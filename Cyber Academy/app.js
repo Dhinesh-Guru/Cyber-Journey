@@ -229,13 +229,21 @@
             if (b) b.unlocked = true;
         }
 
-        // Calculate Academy Progress % (20% per completed chapter out of 5 main chapters)
-        const mainChapterCount = Array.from(completedChapters).filter(id => id !== 'final_exam').length;
-        const pct = Math.min(100, Math.round((mainChapterCount / 5) * 100));
+        // Calculate Academy Progress % (5 main chapters + 1 final exam = 6 total items!)
+        const allAcademyItems = ['ch1', 'ch2', 'ch3', 'ch4', 'ch5', 'final_exam', 'ch_1', 'ch_2', 'ch_3', 'ch_4', 'ch_5'];
+        const completedCount = Array.from(completedChapters).filter(id => allAcademyItems.includes(id) || (typeof id === 'string' && (id.startsWith('ch') || id === 'final_exam'))).length;
+        const isExamDone = completedChapters.has('final_exam');
+        const isFullyFinished = completedCount >= 6 && isExamDone;
+
+        const pct = isFullyFinished ? 100 : Math.min(100, Math.round((completedCount / 6) * 100));
         currentUser.progress.academy = pct;
 
-        if (pct >= 100) {
-            currentUser.unlocked.cyberops = true; // Auto-unlock Level 2 in Main Hub!
+        // CyberOps Lab unlocks ONLY when ALL 6 modules (including Final Exam) are completed!
+        const exp = currentUser.experienceLevel || 'beginner';
+        if (isFullyFinished || exp === 'intermediate' || exp === 'advanced' || currentUser.xp >= 300) {
+            currentUser.unlocked.cyberops = true;
+        } else {
+            currentUser.unlocked.cyberops = false;
         }
 
         saveUser();
@@ -289,8 +297,9 @@
         const container = document.getElementById('chapters-grid-container');
         if (!container) return;
 
-        const mainChapterCount = Array.from(completedChapters).filter(id => id !== 'final_exam').length;
-        const isAllCompleted = mainChapterCount >= 5;
+        const allAcademyItems = ['ch1', 'ch2', 'ch3', 'ch4', 'ch5', 'final_exam', 'ch_1', 'ch_2', 'ch_3', 'ch_4', 'ch_5'];
+        const completedCount = Array.from(completedChapters).filter(id => allAcademyItems.includes(id) || (typeof id === 'string' && (id.startsWith('ch') || id === 'final_exam'))).length;
+        const isAllCompleted = completedCount >= 6 && completedChapters.has('final_exam');
 
         const completionBannerHtml = isAllCompleted ? `
             <div class="cyber-completion-banner" style="background:rgba(0,255,136,0.08); border:1px solid rgba(0,255,136,0.4); border-radius:12px; padding:16px 20px; margin-bottom:24px; display:flex; align-items:center; gap:16px; width:100%; grid-column:1 / -1;">
