@@ -129,6 +129,7 @@
         
         const opsCount = (currentUser.completedCyberOpsModules || []).length;
         currentUser.progress.cyberops = Math.min(100, Math.round((opsCount / 10) * 100));
+        currentUser.lastUpdated = Date.now();
 
         if (currentUser.progress.cyberops >= 100) {
             currentUser.unlocked.cipher = true;

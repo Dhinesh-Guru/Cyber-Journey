@@ -106,6 +106,7 @@
         const mainChapterCount = Array.from(completedChapters).filter(id => id !== 'final_exam').length;
         const pct = Math.min(100, Math.round((mainChapterCount / 5) * 100));
         currentUser.progress.academy = pct;
+        currentUser.lastUpdated = Date.now();
 
         if (pct >= 100) {
             currentUser.unlocked.cyberops = true;

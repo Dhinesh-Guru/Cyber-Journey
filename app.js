@@ -119,15 +119,23 @@
             currentUser.level = Math.floor(mergedXP / 50) + 1;
             currentUser.rank = calculateRank(mergedXP).name;
 
-            const academyPct = Math.max(currentUser.progress.academy || 0, (cloudData.progress && cloudData.progress.academy) || 0);
-            const cyberopsPct = Math.max(currentUser.progress.cyberops || 0, (cloudData.progress && cloudData.progress.cyberops) || 0);
-            const cipherPct = Math.max(currentUser.progress.cipher || 0, (cloudData.progress && cloudData.progress.cipher) || 0);
-
-            currentUser.progress = { academy: academyPct, cyberops: cyberopsPct, cipher: cipherPct };
-
             currentUser.completedAcademyModules = Array.from(new Set([...(currentUser.completedAcademyModules || []), ...(cloudData.completedAcademyModules || [])]));
             currentUser.completedCyberOpsModules = Array.from(new Set([...(currentUser.completedCyberOpsModules || []), ...(cloudData.completedCyberOpsModules || [])]));
             currentUser.completedCipherModules = Array.from(new Set([...(currentUser.completedCipherModules || []), ...(cloudData.completedCipherModules || [])]));
+
+            const acadCount = currentUser.completedAcademyModules.filter(id => id !== 'final_exam').length;
+            const acadPctFromMods = Math.min(100, Math.round((acadCount / 5) * 100));
+            const academyPct = Math.max(currentUser.progress.academy || 0, (cloudData.progress && cloudData.progress.academy) || 0, acadPctFromMods);
+
+            const opsCount = currentUser.completedCyberOpsModules.length;
+            const opsPctFromMods = Math.min(100, Math.round((opsCount / 10) * 100));
+            const cyberopsPct = Math.max(currentUser.progress.cyberops || 0, (cloudData.progress && cloudData.progress.cyberops) || 0, opsPctFromMods);
+
+            const ciphCount = currentUser.completedCipherModules.length;
+            const ciphPctFromMods = Math.min(100, Math.round((ciphCount / 5) * 100));
+            const cipherPct = Math.max(currentUser.progress.cipher || 0, (cloudData.progress && cloudData.progress.cipher) || 0, ciphPctFromMods);
+
+            currentUser.progress = { academy: academyPct, cyberops: cyberopsPct, cipher: cipherPct };
 
             const mergedScores = { ...(currentUser.quizBestScores || {}) };
             if (cloudData.quizBestScores) {

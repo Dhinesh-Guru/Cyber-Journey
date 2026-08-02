@@ -188,6 +188,7 @@ const FirebaseSyncService = (function () {
                 completedCyberOpsModules: userData.completedCyberOpsModules || [],
                 completedCipherModules: userData.completedCipherModules || [],
                 quizBestScores: userData.quizBestScores || {},
+                lastUpdated: userData.lastUpdated || Date.now(),
                 updatedAt: firebase.firestore.FieldValue.serverTimestamp()
             };
 

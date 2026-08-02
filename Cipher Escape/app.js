@@ -137,6 +137,7 @@
 
         const ciphCount = (currentUser.completedCipherModules || []).length;
         currentUser.progress.cipher = Math.min(100, Math.round((ciphCount / 5) * 100));
+        currentUser.lastUpdated = Date.now();
 
         localStorage.setItem(STORAGE_KEY_USER, JSON.stringify(currentUser));
 
