@@ -102,14 +102,19 @@
     function saveUser() {
         currentUser.completedAcademyModules = Array.from(completedChapters);
         
-        // Calculate Academy Progress % (20% per completed chapter out of 5 main chapters)
-        const mainChapterCount = Array.from(completedChapters).filter(id => id !== 'final_exam').length;
-        const pct = Math.min(100, Math.round((mainChapterCount / 5) * 100));
-        currentUser.progress.academy = pct;
+        // Calculate Academy Progress % (5 main chapters + 1 final exam = 6 total items!)
+        const allAcademyItems = ['ch_1', 'ch_2', 'ch_3', 'ch_4', 'ch_5', 'final_exam'];
+        const completedCount = allAcademyItems.filter(id => completedChapters.has(id)).length;
+        const pct = Math.min(100, Math.round((completedCount / 6) * 100));
+        currentUser.progress.academy = (completedCount >= 6) ? 100 : pct;
         currentUser.lastUpdated = Date.now();
 
-        if (pct >= 100) {
+        // CyberOps Lab unlocks ONLY when Academy is 100% complete (including Final Exam!)
+        const exp = currentUser.experienceLevel || 'beginner';
+        if (currentUser.progress.academy >= 100 || exp === 'intermediate' || exp === 'advanced' || currentUser.xp >= 300) {
             currentUser.unlocked.cyberops = true;
+        } else {
+            currentUser.unlocked.cyberops = false;
         }
 
         localStorage.setItem(STORAGE_KEY_USER, JSON.stringify(currentUser));

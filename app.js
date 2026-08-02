@@ -117,7 +117,7 @@
 
         const isCloudReset = (cloudData.xp === 0 && (!cloudData.completedAcademyModules || cloudData.completedAcademyModules.length === 0) && (!cloudData.quizBestScores || Object.keys(cloudData.quizBestScores).length === 0));
 
-        if (isCloudReset && (currentUser.xp === 0 || !currentUser.completedAcademyModules || currentUser.completedAcademyModules.length === 0)) {
+        if (isCloudReset) {
             currentUser.xp = 0;
             currentUser.level = 1;
             currentUser.rank = 'Cyber Trainee';
@@ -137,17 +137,18 @@
             currentUser.completedCyberOpsModules = Array.from(new Set([...(currentUser.completedCyberOpsModules || []), ...(cloudData.completedCyberOpsModules || [])]));
             currentUser.completedCipherModules = Array.from(new Set([...(currentUser.completedCipherModules || []), ...(cloudData.completedCipherModules || [])]));
 
-            const acadCount = currentUser.completedAcademyModules.filter(id => id !== 'final_exam').length;
-            const acadPctFromMods = Math.min(100, Math.round((acadCount / 5) * 100));
-            const academyPct = Math.max(currentUser.progress.academy || 0, (cloudData.progress && cloudData.progress.academy) || 0, acadPctFromMods);
+            const allAcademyItems = ['ch_1', 'ch_2', 'ch_3', 'ch_4', 'ch_5', 'final_exam'];
+            const acadCount = currentUser.completedAcademyModules.filter(id => allAcademyItems.includes(id)).length;
+            const acadPctFromMods = (acadCount >= 6) ? 100 : Math.min(100, Math.round((acadCount / 6) * 100));
+            const academyPct = (acadCount >= 6) ? 100 : acadPctFromMods;
 
             const opsCount = currentUser.completedCyberOpsModules.length;
             const opsPctFromMods = Math.min(100, Math.round((opsCount / 10) * 100));
-            const cyberopsPct = Math.max(currentUser.progress.cyberops || 0, (cloudData.progress && cloudData.progress.cyberops) || 0, opsPctFromMods);
+            const cyberopsPct = Math.max((cloudData.progress && cloudData.progress.cyberops) || 0, opsPctFromMods);
 
             const ciphCount = currentUser.completedCipherModules.length;
             const ciphPctFromMods = Math.min(100, Math.round((ciphCount / 5) * 100));
-            const cipherPct = Math.max(currentUser.progress.cipher || 0, (cloudData.progress && cloudData.progress.cipher) || 0, ciphPctFromMods);
+            const cipherPct = Math.max((cloudData.progress && cloudData.progress.cipher) || 0, ciphPctFromMods);
 
             currentUser.progress = { academy: academyPct, cyberops: cyberopsPct, cipher: cipherPct };
 
@@ -1215,9 +1216,15 @@
                 currentUser.completedCyberOpsModules = [];
                 currentUser.completedCipherModules = [];
                 currentUser.quizBestScores = {};
+
+                const exp = currentUser.experienceLevel || 'beginner';
+                if (exp !== 'intermediate' && exp !== 'advanced') {
+                    currentUser.unlocked = { academy: true, cyberops: false, cipher: false };
+                }
+
                 if (currentUser.badges) currentUser.badges.forEach(b => b.unlocked = false);
 
-                saveUser();
+                saveUser(true); // Force push reset to Cloud!
                 updateUI();
                 closeModal('reset-profile-modal');
                 playSound('error');
