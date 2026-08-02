@@ -54,6 +54,25 @@
     let soundEnabled = true;
     let pendingResetEmail = null;
 
+    function attachLiveCloudSyncListener() {
+        if (currentUser.isLoggedIn && currentUser.isRegistered && typeof FirebaseSyncService !== 'undefined' && FirebaseSyncService.isCloudActive()) {
+            try {
+                if (currentUser.username) {
+                    FirebaseSyncService.listenToLiveUserProfile(currentUser.username, (liveData) => {
+                        if (liveData) mergeCloudDataIntoLocal(liveData);
+                    });
+                }
+                if (currentUser.email && currentUser.email.includes('@')) {
+                    FirebaseSyncService.listenToLiveUserProfile(currentUser.email, (liveData) => {
+                        if (liveData) mergeCloudDataIntoLocal(liveData);
+                    });
+                }
+            } catch (e) {
+                console.warn('Live cloud sync listener error:', e);
+            }
+        }
+    }
+
     // --- Initialization ---
     document.addEventListener('DOMContentLoaded', async () => {
         initMatrixCanvas();
@@ -68,16 +87,11 @@
                 if (cloudData) {
                     mergeCloudDataIntoLocal(cloudData);
                 }
-                
-                FirebaseSyncService.listenToLiveUserProfile(currentUser.username, (liveData) => {
-                    if (liveData) {
-                        mergeCloudDataIntoLocal(liveData);
-                    }
-                });
             } catch (syncErr) {
                 console.warn('Initial cloud sync notice:', syncErr);
             }
         }
+        attachLiveCloudSyncListener();
 
         // Enforce Signup modal on first load if user is not logged in
         if (!currentUser.isLoggedIn) {
@@ -815,6 +829,7 @@
 
             resetAuthForms();
             saveUser();
+            attachLiveCloudSyncListener();
             closeModal('auth-modal');
             playSound('login');
             showToast(`<i class="fa-solid fa-circle-check highlight"></i> Welcome back, ${currentUser.username}!`);
@@ -862,6 +877,7 @@
 
             resetAuthForms();
             saveUser();
+            attachLiveCloudSyncListener();
             closeModal('auth-modal');
             playSound('login');
             showToast(`<i class="fa-solid fa-user-plus highlight"></i> Welcome ${username}! Account registered.`);
