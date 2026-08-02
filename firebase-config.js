@@ -37,10 +37,24 @@ const FirebaseSyncService = (function () {
         }
     }
 
+    // --- Firebase Auth Guard Helper ---
+    async function ensureFirebaseAuth() {
+        if (!isFirebaseActive || !auth) return null;
+        if (auth.currentUser) return auth.currentUser;
+        try {
+            const anonCred = await auth.signInAnonymously();
+            return anonCred ? anonCred.user : null;
+        } catch (e) {
+            console.warn('Anonymous auth signin notice:', e);
+            return null;
+        }
+    }
+
     // --- Cloud Auth Actions ---
     async function signUpWithCloud(email, password, username, userData = {}) {
         if (!isFirebaseActive || !username) return null;
         try {
+            await ensureFirebaseAuth();
             const userKey = username.trim().toLowerCase();
             const emailKey = (email || '').trim().toLowerCase();
 
@@ -66,7 +80,7 @@ const FirebaseSyncService = (function () {
 
             // Attempt Firebase Auth in background
             try {
-                if (email && password && email.includes('@')) {
+                if (email && password && password.length >= 6 && email.includes('@')) {
                     const userCred = await auth.createUserWithEmailAndPassword(email, password);
                     if (userCred && userCred.user) {
                         initialUserData.uid = userCred.user.uid;
@@ -95,6 +109,7 @@ const FirebaseSyncService = (function () {
     async function signInWithCloud(identifier, password) {
         if (!isFirebaseActive || !identifier) return null;
         try {
+            await ensureFirebaseAuth();
             const idKey = identifier.trim().toLowerCase();
 
             // 1. Direct document lookup by username or email key
@@ -119,7 +134,7 @@ const FirebaseSyncService = (function () {
             }
 
             // 3. Fallback: Try Firebase Auth directly if identifier contains '@'
-            if (!data && identifier.includes('@')) {
+            if (!data && identifier.includes('@') && password && password.length >= 6) {
                 try {
                     const userCred = await auth.signInWithEmailAndPassword(identifier, password);
                     if (userCred && userCred.user) {
@@ -146,7 +161,7 @@ const FirebaseSyncService = (function () {
                 }
 
                 // Attempt Firebase Auth signin in background if email is present
-                if (data.email && data.email.includes('@')) {
+                if (data.email && data.email.includes('@') && password && password.length >= 6) {
                     try {
                         await auth.signInWithEmailAndPassword(data.email, password);
                     } catch (aErr) {}
@@ -165,6 +180,7 @@ const FirebaseSyncService = (function () {
     async function syncProgressToCloud(userData) {
         if (!isFirebaseActive || !userData || !userData.username) return;
         try {
+            await ensureFirebaseAuth();
             const userKey = userData.username.trim().toLowerCase();
             const emailKey = (userData.email || '').trim().toLowerCase();
 
@@ -200,7 +216,11 @@ const FirebaseSyncService = (function () {
                 await db.collection('users').doc(auth.currentUser.uid).set(payload, { merge: true });
             }
         } catch (e) {
-            console.error('Error syncing progress to cloud:', e);
+            if (e && (e.code === 'resource-exhausted' || (e.message && e.message.includes('Quota exceeded')))) {
+                console.warn('⚠️ Firebase Firestore daily free quota reached. Cloud Sync is temporarily paused until Firebase quota resets (00:00 PST). App is operating smoothly in local mode.');
+            } else {
+                console.error('Error syncing progress to cloud:', e);
+            }
         }
     }
 
