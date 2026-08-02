@@ -126,6 +126,13 @@ const FirebaseSyncService = (function () {
             const cyberopsPct = (typeof userData.progress === 'object' && userData.progress) ? (userData.progress.cyberops || 0) : 0;
             const cipherPct = (typeof userData.progress === 'object' && userData.progress) ? (userData.progress.cipher || 0) : 0;
 
+            const hasProgress = (userData.completedAcademyModules && userData.completedAcademyModules.length > 0) ||
+                                (userData.completedCyberOpsModules && userData.completedCyberOpsModules.length > 0) ||
+                                (userData.completedCipherModules && userData.completedCipherModules.length > 0) ||
+                                ((userData.xp || 0) > 0);
+
+            const isResetVal = hasProgress ? false : (userData.isReset || false);
+
             const payload = {
                 username: userData.username.trim(),
                 email: userData.email || '',
@@ -140,7 +147,7 @@ const FirebaseSyncService = (function () {
                 completed_cyberops_modules: userData.completedCyberOpsModules || [],
                 completed_cipher_modules: userData.completedCipherModules || [],
                 quiz_best_scores: userData.quizBestScores || {},
-                is_reset: userData.isReset || false,
+                is_reset: isResetVal,
                 updated_at: new Date().toISOString()
             };
 

@@ -115,7 +115,13 @@
     function mergeCloudDataIntoLocal(cloudData) {
         if (!cloudData) return;
 
-        const isCloudReset = (cloudData.isReset === true || (cloudData.xp === 0 && (!cloudData.completedAcademyModules || cloudData.completedAcademyModules.length === 0) && (!cloudData.quizBestScores || Object.keys(cloudData.quizBestScores).length === 0)));
+        const cloudHasAcademy = cloudData.completedAcademyModules && cloudData.completedAcademyModules.length > 0;
+        const cloudHasCyberops = cloudData.completedCyberOpsModules && cloudData.completedCyberOpsModules.length > 0;
+        const cloudHasCipher = cloudData.completedCipherModules && cloudData.completedCipherModules.length > 0;
+        const cloudHasXP = (cloudData.xp || 0) > 0;
+        const cloudHasProgress = cloudHasAcademy || cloudHasCyberops || cloudHasCipher || cloudHasXP;
+
+        const isCloudReset = !cloudHasProgress && (cloudData.isReset === true);
 
         if (isCloudReset) {
             currentUser.xp = 0;
