@@ -61,7 +61,7 @@
     function mergeCloudData(cloudData) {
         if (!cloudData) return;
 
-        const isCloudReset = (cloudData.xp === 0 && (!cloudData.completedAcademyModules || cloudData.completedAcademyModules.length === 0) && (!cloudData.quizBestScores || Object.keys(cloudData.quizBestScores).length === 0));
+        const isCloudReset = (cloudData.isReset === true || (cloudData.xp === 0 && (!cloudData.completedAcademyModules || cloudData.completedAcademyModules.length === 0) && (!cloudData.quizBestScores || Object.keys(cloudData.quizBestScores).length === 0)));
 
         if (isCloudReset) {
             currentUser.xp = 0;
@@ -76,14 +76,14 @@
             currentUser.level = Math.floor(currentUser.xp / 50) + 1;
             if (cloudData.rank) currentUser.rank = cloudData.rank;
 
-            if (cloudData.progress) {
-                currentUser.progress.academy = Math.max(currentUser.progress.academy || 0, cloudData.progress.academy || 0);
-            }
-
             if (cloudData.completedAcademyModules && Array.isArray(cloudData.completedAcademyModules)) {
                 cloudData.completedAcademyModules.forEach(id => completedChapters.add(id));
             }
             currentUser.completedAcademyModules = Array.from(completedChapters);
+
+            const allAcademyItems = ['ch_1', 'ch_2', 'ch_3', 'ch_4', 'ch_5', 'final_exam'];
+            const completedCount = allAcademyItems.filter(id => completedChapters.has(id)).length;
+            currentUser.progress.academy = (completedCount >= 6) ? 100 : Math.min(100, Math.round((completedCount / 6) * 100));
 
             const mergedScores = { ...(currentUser.quizBestScores || {}) };
             if (cloudData.quizBestScores) {

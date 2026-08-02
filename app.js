@@ -115,7 +115,7 @@
     function mergeCloudDataIntoLocal(cloudData) {
         if (!cloudData) return;
 
-        const isCloudReset = (cloudData.xp === 0 && (!cloudData.completedAcademyModules || cloudData.completedAcademyModules.length === 0) && (!cloudData.quizBestScores || Object.keys(cloudData.quizBestScores).length === 0));
+        const isCloudReset = (cloudData.isReset === true || (cloudData.xp === 0 && (!cloudData.completedAcademyModules || cloudData.completedAcademyModules.length === 0) && (!cloudData.quizBestScores || Object.keys(cloudData.quizBestScores).length === 0)));
 
         if (isCloudReset) {
             currentUser.xp = 0;
@@ -126,7 +126,9 @@
             currentUser.completedCyberOpsModules = [];
             currentUser.completedCipherModules = [];
             currentUser.quizBestScores = {};
+            currentUser.isReset = true;
         } else {
+            currentUser.isReset = false;
             // Union & Max Merge so local recent progress is NEVER lost to a stale cloud fetch!
             const mergedXP = Math.max(currentUser.xp || 0, cloudData.xp || 0);
             currentUser.xp = mergedXP;
@@ -139,8 +141,7 @@
 
             const allAcademyItems = ['ch_1', 'ch_2', 'ch_3', 'ch_4', 'ch_5', 'final_exam'];
             const acadCount = currentUser.completedAcademyModules.filter(id => allAcademyItems.includes(id)).length;
-            const acadPctFromMods = (acadCount >= 6) ? 100 : Math.min(100, Math.round((acadCount / 6) * 100));
-            const academyPct = (acadCount >= 6) ? 100 : acadPctFromMods;
+            const academyPct = (acadCount >= 6) ? 100 : Math.min(100, Math.round((acadCount / 6) * 100));
 
             const opsCount = currentUser.completedCyberOpsModules.length;
             const opsPctFromMods = Math.min(100, Math.round((opsCount / 10) * 100));
@@ -167,8 +168,8 @@
 
         currentUser.unlocked = {
             academy: true,
-            cyberops: isCyberopsUnlocked || currentUser.unlocked.cyberops,
-            cipher: isCipherUnlocked || currentUser.unlocked.cipher
+            cyberops: isCyberopsUnlocked,
+            cipher: isCipherUnlocked
         };
 
         saveUser(false); // Save locally and update UI, but do NOT push back to Cloud to prevent snapshot loops!
@@ -1216,6 +1217,8 @@
                 currentUser.completedCyberOpsModules = [];
                 currentUser.completedCipherModules = [];
                 currentUser.quizBestScores = {};
+
+                currentUser.isReset = true;
 
                 const exp = currentUser.experienceLevel || 'beginner';
                 if (exp !== 'intermediate' && exp !== 'advanced') {
