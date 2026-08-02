@@ -139,8 +139,8 @@
             currentUser.completedCyberOpsModules = Array.from(new Set([...(currentUser.completedCyberOpsModules || []), ...(cloudData.completedCyberOpsModules || [])]));
             currentUser.completedCipherModules = Array.from(new Set([...(currentUser.completedCipherModules || []), ...(cloudData.completedCipherModules || [])]));
 
-            const allAcademyItems = ['ch_1', 'ch_2', 'ch_3', 'ch_4', 'ch_5', 'final_exam'];
-            const acadCount = currentUser.completedAcademyModules.filter(id => allAcademyItems.includes(id)).length;
+            const allAcademyItems = ['ch1', 'ch2', 'ch3', 'ch4', 'ch5', 'final_exam', 'ch_1', 'ch_2', 'ch_3', 'ch_4', 'ch_5'];
+            const acadCount = currentUser.completedAcademyModules.filter(id => allAcademyItems.includes(id) || (typeof id === 'string' && (id.startsWith('ch') || id === 'final_exam'))).length;
             const academyPct = (acadCount >= 6) ? 100 : Math.min(100, Math.round((acadCount / 6) * 100));
 
             const opsCount = currentUser.completedCyberOpsModules.length;

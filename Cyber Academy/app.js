@@ -81,8 +81,8 @@
             }
             currentUser.completedAcademyModules = Array.from(completedChapters);
 
-            const allAcademyItems = ['ch_1', 'ch_2', 'ch_3', 'ch_4', 'ch_5', 'final_exam'];
-            const completedCount = allAcademyItems.filter(id => completedChapters.has(id)).length;
+            const allAcademyItems = ['ch1', 'ch2', 'ch3', 'ch4', 'ch5', 'final_exam', 'ch_1', 'ch_2', 'ch_3', 'ch_4', 'ch_5'];
+            const completedCount = Array.from(completedChapters).filter(id => allAcademyItems.includes(id) || (typeof id === 'string' && (id.startsWith('ch') || id === 'final_exam'))).length;
             currentUser.progress.academy = (completedCount >= 6) ? 100 : Math.min(100, Math.round((completedCount / 6) * 100));
 
             const mergedScores = { ...(currentUser.quizBestScores || {}) };
@@ -103,10 +103,10 @@
         currentUser.completedAcademyModules = Array.from(completedChapters);
         
         // Calculate Academy Progress % (5 main chapters + 1 final exam = 6 total items!)
-        const allAcademyItems = ['ch_1', 'ch_2', 'ch_3', 'ch_4', 'ch_5', 'final_exam'];
-        const completedCount = allAcademyItems.filter(id => completedChapters.has(id)).length;
-        const pct = Math.min(100, Math.round((completedCount / 6) * 100));
-        currentUser.progress.academy = (completedCount >= 6) ? 100 : pct;
+        const allAcademyItems = ['ch1', 'ch2', 'ch3', 'ch4', 'ch5', 'final_exam', 'ch_1', 'ch_2', 'ch_3', 'ch_4', 'ch_5'];
+        const completedCount = Array.from(completedChapters).filter(id => allAcademyItems.includes(id) || (typeof id === 'string' && (id.startsWith('ch') || id === 'final_exam'))).length;
+        const pct = (completedCount >= 6) ? 100 : Math.min(100, Math.round((completedCount / 6) * 100));
+        currentUser.progress.academy = pct;
         currentUser.lastUpdated = Date.now();
 
         // CyberOps Lab unlocks ONLY when Academy is 100% complete (including Final Exam!)
