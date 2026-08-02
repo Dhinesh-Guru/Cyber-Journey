@@ -451,43 +451,32 @@
         const totalProgress = Math.round((currentUser.progress.academy + currentUser.progress.cyberops + currentUser.progress.cipher) / 3);
         document.getElementById('stat-progress').textContent = `${totalProgress}% Completed`;
 
-        // User Widget (Header)
-        const widget = document.getElementById('user-widget');
+        // User Widget (Header) - Non-destructive DOM updates to eliminate flickering
+        const profilePill = document.getElementById('open-profile-pill');
+        const authBtn = document.getElementById('open-auth-btn');
+        const usernameLbl = document.getElementById('widget-username-lbl');
+        const rankLbl = document.getElementById('widget-rank-lbl');
+        const avatarContainer = document.getElementById('widget-avatar-container');
+
         if (currentUser.isLoggedIn) {
-            const avatarContent = currentUser.avatar 
-                ? `<img src="${currentUser.avatar}" alt="Avatar">` 
-                : currentUser.username.charAt(0).toUpperCase();
-            
-            widget.innerHTML = `
-                <div class="user-profile-pill" id="open-profile-pill" style="cursor: pointer;">
-                    <div class="user-avatar-mini">${avatarContent}</div>
-                    <div class="user-info-mini">
-                        <span class="user-name-lbl">${currentUser.username}</span>
-                        <span class="user-rank-lbl">${currentUser.rank}</span>
-                    </div>
-                </div>
-            `;
-            const pillEl = document.getElementById('open-profile-pill');
-            if (pillEl) {
-                pillEl.onclick = (e) => {
-                    e.stopPropagation();
-                    openModal('profile-modal');
-                };
+            if (profilePill) profilePill.style.display = 'flex';
+            if (authBtn) authBtn.style.display = 'none';
+
+            if (usernameLbl) usernameLbl.textContent = currentUser.username;
+            if (rankLbl) rankLbl.textContent = currentUser.rank;
+
+            if (avatarContainer) {
+                const desiredAvatarHTML = currentUser.avatar 
+                    ? `<img src="${currentUser.avatar}" alt="Avatar">` 
+                    : currentUser.username.charAt(0).toUpperCase();
+                
+                if (avatarContainer.innerHTML !== desiredAvatarHTML) {
+                    avatarContainer.innerHTML = desiredAvatarHTML;
+                }
             }
         } else {
-            widget.innerHTML = `
-                <button class="auth-trigger-btn" id="open-auth-btn" style="cursor: pointer;">
-                    <i class="fa-solid fa-right-to-bracket"></i> Sign In / Register
-                </button>
-            `;
-            const authBtnEl = document.getElementById('open-auth-btn');
-            if (authBtnEl) {
-                authBtnEl.onclick = (e) => {
-                    e.stopPropagation();
-                    resetAuthForms();
-                    openModal('auth-modal');
-                };
-            }
+            if (profilePill) profilePill.style.display = 'none';
+            if (authBtn) authBtn.style.display = 'flex';
         }
 
         // Sector Cards
@@ -683,20 +672,29 @@
         });
         document.getElementById('nav-roadmap-btn').addEventListener('click', () => openModal('roadmap-modal'));
 
-        // User Widget Event Delegation (Profile & Auth Trigger)
-        const userWidget = document.getElementById('user-widget');
-        if (userWidget) {
-            userWidget.addEventListener('click', (e) => {
-                const pill = e.target.closest('#open-profile-pill');
-                if (pill) {
+        // Profile Pill & Auth Trigger Click Handlers (Static Elements)
+        const openProfPill = document.getElementById('open-profile-pill');
+        if (openProfPill) {
+            openProfPill.addEventListener('click', () => openModal('profile-modal'));
+        }
+
+        const openAuthBtn = document.getElementById('open-auth-btn');
+        if (openAuthBtn) {
+            openAuthBtn.addEventListener('click', () => {
+                resetAuthForms();
+                openModal('auth-modal');
+            });
+        }
+
+        const statBar = document.getElementById('player-stat-bar');
+        if (statBar) {
+            statBar.style.cursor = 'pointer';
+            statBar.addEventListener('click', () => {
+                if (currentUser.isLoggedIn) {
                     openModal('profile-modal');
-                    return;
-                }
-                const authBtn = e.target.closest('#open-auth-btn');
-                if (authBtn) {
+                } else {
                     resetAuthForms();
                     openModal('auth-modal');
-                    return;
                 }
             });
         }

@@ -47,7 +47,16 @@
 
                 <!-- User Profile & Auth Widget -->
                 <div id="user-widget" class="user-widget">
-                    <!-- Dynamic rendering by app.js (Logged in vs Guest) -->
+                    <div class="user-profile-pill" id="open-profile-pill" style="cursor: pointer; display: none;">
+                        <div class="user-avatar-mini" id="widget-avatar-container"><i class="fa-solid fa-user-shield"></i></div>
+                        <div class="user-info-mini">
+                            <span class="user-name-lbl" id="widget-username-lbl">Guest</span>
+                            <span class="user-rank-lbl" id="widget-rank-lbl">Cyber Trainee</span>
+                        </div>
+                    </div>
+                    <button class="auth-trigger-btn" id="open-auth-btn" style="cursor: pointer; display: flex;">
+                        <i class="fa-solid fa-right-to-bracket"></i> Sign In / Register
+                    </button>
                 </div>
             </div>
         </div>
