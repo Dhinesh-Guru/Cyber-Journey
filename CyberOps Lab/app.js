@@ -126,6 +126,9 @@
 
     function saveUser() {
         currentUser.completedCyberOpsModules = Array.from(completedModules);
+        if (completedModules.size > 0 || currentUser.xp > 0) {
+            currentUser.isReset = false;
+        }
         
         const opsCount = (currentUser.completedCyberOpsModules || []).length;
         currentUser.progress.cyberops = Math.min(100, Math.round((opsCount / 10) * 100));

@@ -395,6 +395,13 @@
     }
 
     function saveUser(syncToCloud = true) {
+        if ((currentUser.completedAcademyModules && currentUser.completedAcademyModules.length > 0) ||
+            (currentUser.completedCyberOpsModules && currentUser.completedCyberOpsModules.length > 0) ||
+            (currentUser.completedCipherModules && currentUser.completedCipherModules.length > 0) ||
+            currentUser.xp > 0) {
+            currentUser.isReset = false;
+        }
+
         localStorage.setItem(STORAGE_KEY_USER, JSON.stringify(currentUser));
         if (currentUser.isLoggedIn && currentUser.isRegistered) {
             saveRegisteredUser(currentUser);

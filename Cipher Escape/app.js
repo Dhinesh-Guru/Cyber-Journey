@@ -132,6 +132,9 @@
 
     function saveUser() {
         currentUser.completedCipherModules = Array.from(completedModules);
+        if (completedModules.size > 0 || currentUser.xp > 0) {
+            currentUser.isReset = false;
+        }
         currentUser.unlockedCipherRooms = Array.from(unlockedRooms);
         currentUser.completedCipherRooms = Array.from(completedRooms);
 

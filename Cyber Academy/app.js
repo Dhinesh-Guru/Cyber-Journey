@@ -101,6 +101,9 @@
 
     function saveUser() {
         currentUser.completedAcademyModules = Array.from(completedChapters);
+        if (completedChapters.size > 0 || currentUser.xp > 0) {
+            currentUser.isReset = false;
+        }
         
         // Calculate Academy Progress % (5 main chapters + 1 final exam = 6 total items!)
         const allAcademyItems = ['ch1', 'ch2', 'ch3', 'ch4', 'ch5', 'final_exam', 'ch_1', 'ch_2', 'ch_3', 'ch_4', 'ch_5'];
