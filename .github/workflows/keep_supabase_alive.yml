@@ -2,17 +2,18 @@ name: Keep Supabase Active
 
 on:
   schedule:
-    # Runs every 3 days at 00:00 UTC automatically
-    - cron: '0 0 */3 * *'
+    # Runs daily at 12:00 UTC to guarantee active database query activity
+    - cron: '0 12 * * *'
   workflow_dispatch: # Allows you to manually trigger it anytime from GitHub
 
 jobs:
   ping-supabase:
     runs-on: ubuntu-latest
     steps:
-      - name: Send keep-alive request to Supabase
+      - name: Send keep-alive database query to Supabase
         run: |
           curl -s -o /dev/null -w "HTTP Response Code: %{http_code}\n" \
             -H "apikey: sb_publishable_1FQr9dIQvk6nQRwxMvewVQ_ERxXCMEW" \
             -H "Authorization: Bearer sb_publishable_1FQr9dIQvk6nQRwxMvewVQ_ERxXCMEW" \
-            "https://wsztjvpiyumzvtpqowlx.supabase.co/rest/v1/"
+            "https://wsztjvpiyumzvtpqowlx.supabase.co/rest/v1/users?select=username&limit=1"
+
